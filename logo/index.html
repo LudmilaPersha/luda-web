@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oranienbaum&family=Old+Standard+TT:wght@700&family=Playfair+Display:wght@600&family=Cormorant+SC:wght@700&display=swap" rel="stylesheet">
 <style>
-  :root { --bg: #fff; --ink: #222; --muted: #666; --line: #ddd; --olive: #45422c; }
+  :root { --bg: #fff; --ink: #222; --muted: #666; --line: #ddd; --olive: #4b4630; }
   @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #fff; } }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 system-ui, sans-serif; }
@@ -65,7 +65,7 @@
     const font = f.dataset.font, w = f.dataset.w;
     f.insertAdjacentHTML('afterbegin', `<svg viewBox="0 0 600 600" xmlns="${NS}" role="img" aria-label="Перший магазин вражень в Чехії">
       <g fill="var(--olive)" font-family="'${font}', serif" font-weight="${w}" font-size="${SIZE}"></g>
-      <image href="emblem.png" x="150" y="215" width="300" height="176"/></svg>`);
+      <image href="lion.svg" x="150" y="213" width="300" height="179"/></svg>`);
     const g = f.querySelector('g');
     arcText(g, 'ПЕРШИЙ МАГАЗИН ВРАЖЕНЬ', font, w, 215, CY, 0, false);
     arcText(g, 'В ЧЕХІЇ', font, w, 420, 545 - 420, 0, true);
