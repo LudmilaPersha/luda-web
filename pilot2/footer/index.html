@@ -33,7 +33,7 @@
   :focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
 
   /* ── ШАПКА: лев зліва · назва по центру · контакти справа ── */
-  header.top { position: relative; overflow: hidden; border-bottom: 1px solid var(--line); background: var(--paper); }
+  header.top { position: relative; overflow: hidden; background: var(--paper); }
   .head { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 24px; padding-block: 22px; position: relative; z-index: 1; }
   .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--red); }
   .brand img { height: 120px; width: auto; display: block; } /* круглий логотип (варіант B), назва вже в ньому */
@@ -62,9 +62,13 @@
   .tab[aria-pressed="true"] b { color: var(--red); }
 
   /* ── ЧЕРВОНИЙ ОРНАМЕНТ + меню між ним ── */
-  .orn { display: flex; align-items: center; gap: 10px; color: var(--red); }
-  .orn::before, .orn::after { content: ""; flex: 1; height: 2px; background: var(--red); border-radius: 2px; }
-  .orn svg { width: 90px; height: 22px; flex: none; }
+  .orn { display: flex; align-items: center; gap: 4px; color: #d0463c; } /* лінії й орнамент — як на старому сайті */
+  .orn::before, .orn::after { content: ""; flex: 1; height: 5px; background: currentColor; }
+  .orn::before { clip-path: polygon(0 50%, 100% 0, 100% 100%); } /* лінія тоншає до країв */
+  .orn::after { clip-path: polygon(0 0, 100% 50%, 0 100%); }
+  .orn svg { width: 160px; height: 40px; flex: none; }
+  .orn .lf { fill: currentColor; stroke: none; }
+
   .menu { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 34px; padding-block: 10px; font-size: 16px; }
   .menu a { text-decoration: none; }
   .menu a:hover { color: var(--red); }
@@ -201,9 +205,9 @@
 <div class="wrap">
   <div class="tabs" id="tabs"></div>
   <div class="bar">
-    <div class="orn" aria-hidden="true"><svg viewBox="0 0 90 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M45 11c-5-8-15-9-17-2s8 9 11 3M45 11c5-8 15-9 17 2s-8 9-11 3"/><path d="M28 9c-6-5-14-3-15 2m49-2c6-5 14-3 15 2"/><circle cx="45" cy="11" r="2.4" fill="currentColor"/></svg></div>
+    <div class="orn" aria-hidden="true"><svg viewBox="0 0 160 40" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round"><g><path d="M80 23C77 12 65 8 59 13c-5 5-1 13 5 11 4-1 3-7-1-6"/><path d="M59 18c-8 8-20 10-26 4-4-4 0-9 4-7 3 2 1 6-2 5"/><path d="M33 22c-6 2-13 0-19-2"/><path class="lf" d="M51 12c-4-6-11-7-15-4 5 1 10 3 15 4z"/><path class="lf" d="M47 25c-2 5-7 7-11 6 3-3 7-5 11-6z"/></g><g transform="matrix(-1 0 0 1 160 0)"><path d="M80 23C77 12 65 8 59 13c-5 5-1 13 5 11 4-1 3-7-1-6"/><path d="M59 18c-8 8-20 10-26 4-4-4 0-9 4-7 3 2 1 6-2 5"/><path d="M33 22c-6 2-13 0-19-2"/><path class="lf" d="M51 12c-4-6-11-7-15-4 5 1 10 3 15 4z"/><path class="lf" d="M47 25c-2 5-7 7-11 6 3-3 7-5 11-6z"/></g><path class="lf" d="M80 16l4 6-4 6-4-6z"/></svg></div>
     <nav class="menu" aria-label="Меню"><a href="#">Головна</a><a href="#about">Про нас</a><a href="#">Інформація про Чехію</a><a href="#">Відгуки туристів</a><a href="#contacts">Контакти</a></nav>
-    <div class="orn" aria-hidden="true"><svg viewBox="0 0 90 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M45 11c-5-8-15-9-17-2s8 9 11 3M45 11c5-8 15-9 17 2s-8 9-11 3"/><path d="M28 9c-6-5-14-3-15 2m49-2c6-5 14-3 15 2"/><circle cx="45" cy="11" r="2.4" fill="currentColor"/></svg></div>
+    <div class="orn" aria-hidden="true"><svg viewBox="0 0 160 40" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round"><g><path d="M80 23C77 12 65 8 59 13c-5 5-1 13 5 11 4-1 3-7-1-6"/><path d="M59 18c-8 8-20 10-26 4-4-4 0-9 4-7 3 2 1 6-2 5"/><path d="M33 22c-6 2-13 0-19-2"/><path class="lf" d="M51 12c-4-6-11-7-15-4 5 1 10 3 15 4z"/><path class="lf" d="M47 25c-2 5-7 7-11 6 3-3 7-5 11-6z"/></g><g transform="matrix(-1 0 0 1 160 0)"><path d="M80 23C77 12 65 8 59 13c-5 5-1 13 5 11 4-1 3-7-1-6"/><path d="M59 18c-8 8-20 10-26 4-4-4 0-9 4-7 3 2 1 6-2 5"/><path d="M33 22c-6 2-13 0-19-2"/><path class="lf" d="M51 12c-4-6-11-7-15-4 5 1 10 3 15 4z"/><path class="lf" d="M47 25c-2 5-7 7-11 6 3-3 7-5 11-6z"/></g><path class="lf" d="M80 16l4 6-4 6-4-6z"/></svg></div>
   </div>
 </div>
 
