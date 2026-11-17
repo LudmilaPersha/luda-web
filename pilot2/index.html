@@ -21,8 +21,7 @@
     --ink: #3b2b1d;       /* основний текст */
     --muted: #7b6650;     /* другорядний текст */
     --line: #dcc79c;      /* тонкі лінії */
-    --sky: #eee3c6;       /* контури Праги в шапці — ледь помітні */
-    --sky-strip: #e6d7ae; /* варіант B: смуга під текстом — трохи темніша, бо тексту на ній немає */
+    --sky: #e6d7ae;       /* контури Праги над підвалом і сам підвал */
     --head: "PT Serif", Georgia, "Times New Roman", serif;
     --font: "PT Sans", "Segoe UI", Arial, sans-serif;
     color-scheme: light;
@@ -35,18 +34,7 @@
 
   /* ── ШАПКА: лев зліва · назва по центру · контакти справа ── */
   header.top { position: relative; overflow: hidden; border-bottom: 1px solid var(--line); background: var(--paper); }
-  /* Контури Праги на тлі шапки, як на старому сайті: Град, св. Віт, св. Миколай, Карлів міст, Тин, Вишеград */
-  .sky { position: absolute; inset: 0; width: 100%; height: 100%; fill: var(--sky); pointer-events: none; }
-  .sky .gap { fill: var(--paper); } /* арки моста */
-  /* ВАРІАНТ B: контури Праги окремою смугою ПІД текстом шапки (текст на чистому тлі) */
-  header.top.below { display: flex; flex-direction: column; }
-  header.top.below .sky { position: static; order: 2; height: clamp(48px, 7.5vw, 110px); fill: var(--sky-strip); }
-  header.top.below .head { padding-block: 22px 6px; }
-  /* Перемикач варіантів — лише для пілота */
-  .variant { position: fixed; right: max(12px, env(safe-area-inset-right, 0px)); bottom: max(12px, env(safe-area-inset-bottom, 0px)); z-index: 20; display: flex; gap: 4px; align-items: center; background: var(--cream); border: 1px solid var(--line); border-radius: 999px; padding: 4px 4px 4px 12px; font-size: 13px; box-shadow: 0 4px 14px rgb(59 43 29 / .18); }
-  .variant button { appearance: none; border: 0; border-radius: 999px; padding: 5px 12px; font: inherit; cursor: pointer; background: none; color: var(--ink); }
-  .variant button[aria-pressed="true"] { background: var(--red); color: #fff; }
-  .head { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 24px; padding-block: 22px 34px; position: relative; z-index: 1; }
+  .head { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 24px; padding-block: 22px; position: relative; z-index: 1; }
   .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--red); }
   .brand img { height: 64px; width: auto; display: block; }
   .brand span { font-family: var(--head); font-weight: 700; line-height: 1.1; font-size: 15px; letter-spacing: .04em; text-transform: uppercase; }
@@ -124,7 +112,11 @@
   .close { position: absolute; top: 14px; right: 14px; width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--line); background: var(--paper-2); font-size: 22px; line-height: 1; cursor: pointer; color: var(--ink); }
   .dlg .ask { display: inline-block; margin-top: 8px; background: var(--red); color: #fff; text-decoration: none; padding: 10px 20px; border-radius: 6px; font-weight: 700; }
 
-  footer { border-top: 1px solid var(--line); padding-block: 18px; font-size: 14px; color: var(--muted); }
+  /* Контури Праги між основною частиною і підвалом: місто «стоїть» на підвалі того самого кольору.
+     Град, св. Віт, св. Миколай, Карлів міст, Тин, Вишеград — як на старому сайті, але не під текстом. */
+  .sky { display: block; width: 100%; height: clamp(60px, 8vw, 120px); fill: var(--sky); }
+  .sky .gap { fill: var(--paper); } /* арки моста */
+  footer { background: var(--sky); margin-top: -1px; padding-block: 5px 20px; font-size: 14px; color: var(--muted); }
 
   /* ── ТЕЛЕФОН / ПЛАНШЕТ ── */
   @media (max-width: 980px) { .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } .main { grid-template-columns: 220px minmax(0, 1fr); gap: 24px; } }
@@ -152,7 +144,6 @@
 </style>
 
 <header class="top">
-  <svg class="sky" id="sky" viewBox="0 0 1600 160" preserveAspectRatio="xMidYMax slice" aria-hidden="true"></svg>
   <div class="wrap head">
     <a class="brand" href="#">
       <img src="images/logo-mark-red.png" alt="">
@@ -193,12 +184,8 @@
   <section class="content" id="content" aria-live="polite"></section>
 </div>
 
+<svg class="sky" id="sky" viewBox="0 40 1600 112" preserveAspectRatio="xMidYMax slice" aria-hidden="true"></svg>
 <footer><div class="wrap">© Перший магазин вражень в Чехії, 2011–2026</div></footer>
-
-<div class="variant" role="group" aria-label="Фон шапки">Фон шапки:
-  <button type="button" data-v="a" aria-pressed="false">A за текстом</button>
-  <button type="button" data-v="b" aria-pressed="true">B під текстом</button>
-</div>
 
 <dialog id="dlg"><button class="close" id="dlg-close" aria-label="Закрити">×</button><div class="dlg" id="dlg-body"></div></dialog>
 
@@ -458,15 +445,6 @@ function skyline() {
   document.getElementById("sky").innerHTML = P.join("");
 }
 skyline();
-
-/* Варіант A — контури за текстом; B — смугою під текстом (обрізаємо порожнє небо зверху) */
-function setVariant(v) {
-  document.querySelector("header.top").classList.toggle("below", v === "b");
-  document.getElementById("sky").setAttribute("viewBox", v === "b" ? "0 40 1600 112" : "0 0 1600 160");
-  document.querySelectorAll(".variant button").forEach(b => b.setAttribute("aria-pressed", b.dataset.v === v));
-}
-document.querySelectorAll(".variant button").forEach(b => b.onclick = () => setVariant(b.dataset.v));
-setVariant("b");
 
 if (matchMedia("(max-width: 760px)").matches) document.getElementById("catalog").open = false;
 render();
