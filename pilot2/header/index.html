@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<!-- Пілот 2: не показувати в пошукових системах -->
+<meta name="robots" content="noindex">
+<title>Перший магазин вражень — пілот 2</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400&family=PT+Serif:ital,wght@0,400;0,700;1,400&display=swap">
+<style>
+  /* ПІЛОТ 2 — вигляд старого сайту Людмили (кремовий папір, червоний лев, червоні заголовки,
+     коричневі картки, каталог зліва), але чисто і сучасно. Одна тема (світла) — свідомо. */
+  :root {
+    --paper: #f7eed6;     /* кремовий фон */
+    --paper-2: #efe2c0;   /* трохи темніший — каталог, заглушки фото */
+    --red: #b3262a;       /* червоний: лев, заголовки, орнамент */
+    --brown: #8b5a33;     /* коричневі картки */
+    --brown-2: #74482a;   /* картка при наведенні */
+    --cream: #fff7e6;     /* текст на картках */
+    --ink: #3b2b1d;       /* основний текст */
+    --muted: #7b6650;     /* другорядний текст */
+    --line: #dcc79c;      /* тонкі лінії */
+    --sky: #e6d7ae;       /* контури Праги над підвалом і сам підвал */
+    --head: "PT Serif", Georgia, "Times New Roman", serif;
+    --font: "PT Sans", "Segoe UI", Arial, sans-serif;
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 17px/1.6 var(--font); }
+  .wrap { max-width: 1200px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
+
+  /* ── ШАПКА: лев зліва · назва по центру · контакти справа ── */
+  header.top { position: relative; overflow: hidden; border-bottom: 1px solid var(--line); background: var(--paper); }
+  .head { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 24px; padding-block: 22px 6px; position: relative; z-index: 1; }
+  .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--red); }
+  .brand img { height: 64px; width: auto; display: block; }
+  .brand span { font-family: var(--head); font-weight: 700; line-height: 1.1; font-size: 15px; letter-spacing: .04em; text-transform: uppercase; }
+  .brand small { display: block; font-weight: 400; font-style: italic; text-transform: none; letter-spacing: 0; font-size: 14px; margin-top: 3px; }
+  .title { text-align: center; }
+  .title h1 { margin: 0; font-family: var(--head); font-weight: 700; color: var(--red); font-size: clamp(20px, 2.4vw, 30px); letter-spacing: .03em; text-transform: uppercase; text-wrap: balance; }
+  .title nav { display: flex; justify-content: center; gap: 20px; margin-top: 6px; font-size: 15px; }
+  .title nav a { text-decoration: none; color: var(--ink); }
+  .title nav a:hover { color: var(--red); }
+  .contact { display: grid; gap: 4px; justify-items: end; font-size: 15px; }
+  .contact a { text-decoration: none; }
+  .contact .phone { font-weight: 700; font-variant-numeric: tabular-nums; }
+  .msgr { display: flex; gap: 6px; margin-top: 4px; }
+  .msgr a { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; color: #fff; }
+  .msgr svg { width: 17px; height: 17px; }
+  .msgr .wa { background: #25a244; } .msgr .tg { background: #2a9ed8; } .msgr .vb { background: #7360f2; }
+
+  /* ── РУБРИКИ-ВКЛАДКИ з фото (як на старому сайті) ── */
+  .tabs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; padding-block: 28px 8px; }
+  .tab { appearance: none; border: 0; padding: 0; background: none; cursor: pointer; text-align: left; font: inherit; color: var(--ink); }
+  .tab b { display: block; font-family: var(--head); font-weight: 700; font-size: 16px; text-align: center; background: var(--paper-2); border: 1px solid var(--line); border-bottom: 0; border-radius: 10px 10px 0 0; padding: 6px 8px; margin: 0 10px; }
+  .tab .ph { display: block; aspect-ratio: 16 / 10; border-radius: 10px; overflow: hidden; box-shadow: 0 6px 18px rgb(59 43 29 / .22); border: 1px solid var(--line); }
+  .tab img { width: 100%; height: 100%; object-fit: cover; display: block; filter: sepia(.75) saturate(.8); transition: filter .35s, transform .35s; } /* сепія, як на старому сайті; активна вкладка — у кольорі */
+  .tab:hover img, .tab[aria-pressed="true"] img { filter: none; transform: scale(1.03); }
+  .tab[aria-pressed="true"] b { color: var(--red); }
+
+  /* ── ЧЕРВОНИЙ ОРНАМЕНТ + меню між ним ── */
+  .orn { display: flex; align-items: center; gap: 10px; color: var(--red); }
+  .orn::before, .orn::after { content: ""; flex: 1; height: 2px; background: var(--red); border-radius: 2px; }
+  .orn svg { width: 90px; height: 22px; flex: none; }
+  .menu { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 34px; padding-block: 10px; font-size: 16px; }
+  .menu a { text-decoration: none; }
+  .menu a:hover { color: var(--red); }
+  .bar { padding-block: 18px 6px; }
+
+  /* ── ГОЛОВНА ЧАСТИНА: каталог зліва + картки ── */
+  .main { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 36px; padding-block: 28px 64px; align-items: start; }
+  aside h2, .content h2 { font-family: var(--head); font-weight: 400; color: var(--red); font-size: 28px; margin: 0 0 12px; line-height: 1.2; }
+  .cat { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; font-size: 15px; }
+  .cat button { appearance: none; border: 0; background: none; font: inherit; color: var(--ink); cursor: pointer; text-align: left; padding: 5px 0; width: 100%; }
+  .cat > li > button { font-weight: 700; }
+  .cat button:hover, .cat button.on { color: var(--red); }
+  .cat ul { list-style: none; margin: 0 0 6px; padding: 0 0 0 14px; border-left: 1px solid var(--line); }
+  .cat ul button { padding: 3px 0; }
+  aside details > summary { list-style: none; }
+  aside details > summary::-webkit-details-marker { display: none; }
+  aside .note { margin-top: 22px; font-size: 14px; color: var(--muted); }
+
+  .content { min-width: 0; }
+  .lang { color: var(--muted); font-size: 14px; font-style: italic; margin: -6px 0 18px; }
+  .sub { margin-bottom: 40px; scroll-margin-top: 16px; }
+  .sub h3 { font-family: var(--head); font-weight: 700; font-size: 21px; margin: 0 0 14px; display: flex; align-items: center; gap: 12px; }
+  .sub h3::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+  .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+  .card { appearance: none; border: 0; font: inherit; text-align: left; cursor: pointer; background: var(--brown); color: var(--cream); border-radius: 10px; padding: 14px 14px 16px; display: grid; grid-template-rows: auto 1fr auto; gap: 8px; box-shadow: 0 6px 16px rgb(59 43 29 / .25); transition: background .2s, transform .2s; }
+  .card:hover { background: var(--brown-2); transform: translateY(-2px); }
+  .card h4 { margin: 0; font-family: var(--head); font-weight: 400; font-size: 19px; line-height: 1.25; text-wrap: balance; }
+  .card .price { font-size: 14px; opacity: .85; align-self: end; }
+  .card .pic { aspect-ratio: 4 / 3; border-radius: 6px; overflow: hidden; background: var(--paper-2); display: grid; place-items: center; }
+  .card .pic img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .card .pic.empty img { width: 46%; height: auto; opacity: .3; object-fit: contain; } /* заглушка: фото ще немає */
+  .empty-note { color: var(--muted); font-style: italic; margin: 0 0 16px; }
+
+  /* ── ВІКНО з повним текстом програми ── */
+  dialog { border: 0; border-radius: 12px; padding: 0; width: min(760px, calc(100% - 32px)); max-height: calc(100% - 48px); background: var(--paper); color: var(--ink); box-shadow: 0 20px 60px rgb(0 0 0 / .35); }
+  dialog::backdrop { background: rgb(40 25 15 / .55); }
+  .dlg { padding: 28px 30px 30px; }
+  .dlg h2 { font-family: var(--head); color: var(--red); font-weight: 700; font-size: 26px; margin: 0 40px 14px 0; line-height: 1.2; }
+  .dlg img.hero { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 8px; margin-bottom: 16px; display: block; }
+  .dlg p { margin: 0 0 12px; }
+  .dlg ul { margin: 0 0 12px; padding-left: 22px; }
+  .dlg .pr { background: var(--paper-2); border-left: 3px solid var(--red); padding: 10px 14px; border-radius: 0 6px 6px 0; margin: 0 0 14px; font-variant-numeric: tabular-nums; }
+  .dlg .pr p, .dlg .pr ul { margin: 0; }
+  .dlg .todo { color: var(--muted); font-style: italic; }
+  .close { position: absolute; top: 14px; right: 14px; width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--line); background: var(--paper-2); font-size: 22px; line-height: 1; cursor: pointer; color: var(--ink); }
+  .dlg .ask { display: inline-block; margin-top: 8px; background: var(--red); color: #fff; text-decoration: none; padding: 10px 20px; border-radius: 6px; font-weight: 700; }
+
+  /* Контури Праги окремою смугою під текстом шапки (текст на чистому тлі).
+     Град, св. Віт, св. Миколай, Карлів міст, Тин, Вишеград — як на старому сайті, але не під текстом. */
+  .sky { display: block; width: 100%; height: clamp(48px, 7.5vw, 110px); fill: var(--sky); } /* смуга під текстом шапки */
+  .sky .gap { fill: var(--paper); } /* арки моста */
+  footer { border-top: 1px solid var(--line); padding-block: 18px; font-size: 14px; color: var(--muted); }
+
+  /* ── ТЕЛЕФОН / ПЛАНШЕТ ── */
+  @media (max-width: 980px) { .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } .main { grid-template-columns: 220px minmax(0, 1fr); gap: 24px; } }
+  @media (max-width: 760px) {
+    .head { grid-template-columns: 1fr auto; gap: 12px; }
+    .title { grid-column: 1 / -1; grid-row: 2; }
+    .title nav { display: none; }
+    .brand img { height: 48px; }
+    .contact { font-size: 14px; }
+    .tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; padding-top: 18px; }
+    .tab b { font-size: 14px; margin: 0 6px; }
+    .menu { gap: 4px 20px; font-size: 15px; }
+    .main { grid-template-columns: 1fr; }
+    aside { background: var(--paper-2); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+    aside details > summary { list-style: none; cursor: pointer; }
+    aside details > summary::-webkit-details-marker { display: none; }
+    aside details > summary h2 { margin: 0; font-size: 22px; display: flex; justify-content: space-between; }
+    aside details > summary h2::after { content: "▾"; font-size: 18px; }
+    aside details[open] > summary h2::after { content: "▴"; }
+    aside details[open] > summary { margin-bottom: 10px; }
+    .dlg { padding: 22px 18px 24px; }
+  }
+  @media (max-width: 480px) { .cards { grid-template-columns: 1fr; } .contact .mail { display: none; } }
+  @media (prefers-reduced-motion: reduce) { .tab img, .card { transition: none; } }
+</style>
+
+<header class="top">
+  <div class="wrap head">
+    <a class="brand" href="#">
+      <img src="../images/logo-mark-red.png" alt="">
+      <span>Перший магазин<br>вражень<small>в Чехії</small></span>
+    </a>
+    <div class="title">
+      <h1>Індивідуальні тури в Прагу</h1>
+      <nav aria-label="Рубрики"><a href="#" data-go="0">Екскурсії</a><a href="#" data-go="2">Дозвілля</a><a href="#" data-go="3">Додаткові послуги</a></nav>
+    </div>
+    <div class="contact">
+      <a class="mail" href="mailto:czvpodarok@seznam.cz">czvpodarok@seznam.cz</a>
+      <a class="phone" href="tel:+420775423334">+420 775 423 334</a>
+      <div class="msgr">
+        <a class="wa" href="https://wa.me/420775423334" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3a9 9 0 0 0-7.8 13.5L3 21l4.6-1.2A9 9 0 1 0 12 3zm4.6 12.6c-.2.6-1.1 1.1-1.6 1.2-.4 0-.9.1-2.9-.7-2.4-1-4-3.4-4.1-3.6-.1-.2-1-1.3-1-2.5s.6-1.8.9-2c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.1.1.3 0 .5l-.4.6-.3.3c-.1.1-.3.3-.1.5.1.3.6 1 1.3 1.6.9.8 1.6 1 1.9 1.1.2.1.4.1.5-.1l.7-.9c.2-.2.3-.2.5-.1l1.8.9c.3.1.4.2.5.3.1.2.1.7-.1 1.3z"/></svg></a>
+        <a class="tg" href="https://t.me/+420775423334" target="_blank" rel="noopener" aria-label="Telegram"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.7 4.3 2.9 11.2c-.8.3-.8 1.2 0 1.5l4.4 1.4 1.7 5.3c.2.6.9.8 1.4.4l2.5-2.1 4.6 3.4c.6.4 1.4.1 1.5-.6l3-14.3c.2-.8-.6-1.4-1.3-1.1zM9.6 14l-.4 3.4-1.2-3.8 9.3-6.1z"/></svg></a>
+        <a class="vb" href="viber://chat?number=%2B420775423334" aria-label="Viber"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.6 3.8c.4-.1.8 0 1.1.3l2 2.4c.3.4.3.9 0 1.3l-1.1 1.2a10 10 0 0 0 6.4 6.4l1.2-1.1c.4-.3.9-.3 1.3 0l2.4 2c.3.3.4.7.3 1.1-.5 1.7-2 2.8-3.7 2.6C9.5 19.4 4.6 14.5 4 7.5 3.8 5.8 4.9 4.3 6.6 3.8z"/></svg></a>
+      </div>
+    </div>
+  </div>
+  <svg class="sky" id="sky" viewBox="0 40 1600 112" preserveAspectRatio="xMidYMax slice" aria-hidden="true"></svg>
+</header>
+
+<div class="wrap">
+  <div class="tabs" id="tabs"></div>
+  <div class="bar">
+    <div class="orn" aria-hidden="true"><svg viewBox="0 0 90 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M45 11c-5-8-15-9-17-2s8 9 11 3M45 11c5-8 15-9 17 2s-8 9-11 3"/><path d="M28 9c-6-5-14-3-15 2m49-2c6-5 14-3 15 2"/><circle cx="45" cy="11" r="2.4" fill="currentColor"/></svg></div>
+    <nav class="menu" aria-label="Меню"><a href="#">Головна</a><a href="#">Про нас</a><a href="#">Інформація про Чехію</a><a href="#">Відгуки туристів</a><a href="#">Контакти</a></nav>
+    <div class="orn" aria-hidden="true"><svg viewBox="0 0 90 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M45 11c-5-8-15-9-17-2s8 9 11 3M45 11c5-8 15-9 17 2s-8 9-11 3"/><path d="M28 9c-6-5-14-3-15 2m49-2c6-5 14-3 15 2"/><circle cx="45" cy="11" r="2.4" fill="currentColor"/></svg></div>
+  </div>
+</div>
+
+<div class="wrap main">
+  <aside>
+    <details id="catalog" open>
+      <summary><h2>Наш каталог</h2></summary>
+      <ul class="cat" id="cat"></ul>
+    </details>
+  </aside>
+  <section class="content" id="content" aria-live="polite"></section>
+</div>
+
+<footer><div class="wrap">© Перший магазин вражень в Чехії, 2011–2026</div></footer>
+
+<dialog id="dlg"><button class="close" id="dlg-close" aria-label="Закрити">×</button><div class="dlg" id="dlg-body"></div></dialog>
+
+<script>
+/* КАТАЛОГ. Рубрика → підрубрики → програми. Додати рубрику/підрубрику/програму = додати ще один блок.
+   Тексти Людмили — дослівно, як вона надіслала (17.11.2026). price = рядок ціни для картки. */
+const CATALOG = [
+  { title: "Екскурсії по Празі", photo: "../images/korolivskyi-shliakh.jpg", lang: "українська, англійська, французька",
+    pending: true,
+    subs: [{ title: "Екскурсії", items: [
+      { title: "Королівський шлях", photo: "../images/korolivskyi-shliakh.jpg" },
+      { title: "Празький Град", photo: "../images/prazkyi-grad.jpg" },
+      { title: "Таємна Прага", photo: "../images/taiemna-praha.jpg" } ] }] },
+  { title: "Екскурсії по Чехії", photo: "../images/cheskyi-krumlov.jpg", lang: "українська",
+    pending: true,
+    subs: [{ title: "Екскурсії", items: [
+      { title: "Кутна Гора", photo: "../images/kutna-hora.jpg" },
+      { title: "Чеський Крумлов", photo: "../images/cheskyi-krumlov.jpg" },
+      { title: "Карлові Вари", photo: "../images/karlovi-vary.jpg" } ] }] },
+  { title: "Дозвілля", photo: "../images/vltava.jpg", lang: "українська, англійська, французька",
+    subs: [
+    { title: "Річні круїзи", items: [
+      { title: "Вечеря на панорамному кораблі із живою музикою", photo: "../images/vltava.jpg",
+        price: "Ціна: 79 євро/доросла особа",
+        body: `<p>Вечір на сучасному панорамному кораблеві "Кришталева вечеря"</p>
+<div class="pr"><p>Ціна:  79 євро/доросла особа (місця в центральній частині палуби)<br>Ціна:  99 євро/ доросла особа (місця біля вікон)<br>Ціна:  129 євро/доросла особа (місця в салоні)</p></div>` },
+      { title: "Щоденні річкові круїзи", photo: "../images/progulianka-2.jpg",
+        price: "Ціна -  390 Kč/дорослі",
+        body: `<p>Круїз тривалістю 50 хвилин</p>
+<div class="pr"><p>Ціна -  390 Kč/дорослі<br>250 Kč/діти 120 - 150 см<br>безкоштовно діти до 120 см</p></div>
+<p>Круїз тривалістю 1 година 50 хвилин</p>
+<div class="pr"><p>Ціна -  490 Kč/дорослі<br>290 Kč/діти 120 - 150 см<br>безкоштовно діти до 120 см</p></div>
+<p>Круїз тривалістю 1 година 50 хвилин із обідом/вечерею (шведський стіл із вітальним напоєм)</p>
+<div class="pr"><p>Ціна -  1190 Kč/дорослі<br>590 Kč/діти 120 - 150 см<br>безкоштовно діти до 120 см</p></div>` },
+      { title: "Оренда корабля  в Празі",
+        body: `<p>Пропонуємо оренду суден різної місткості, котрі дозволяють цікаво провести час як у вузькій компанії на суднах місткістю від 2-4 осіб, так і великими групами до 550 осіб.</p>
+<p>Щоразу, за бажанням замовника враховується тривалість оренди, ціновий варіант шведського столу, додаткові послуги (декорування салону і тому подібне).</p>
+<p>Деякі кораблі дають можливість замовити  гриль, фуршет, меню яких обговорюється заздалегідь і здатне задовольнити найвибагливіших гурманів.</p>
+<p>Є варіанти, що можна принести із собою їду. Напої щоразу обмовляються окремо.</p>
+<p>Час на кораблі можна додатково прикрасити окрім музичного супроводу, повноцінною розважальною програмою, екскурсіями і т.д. за запитом.</p>
+<p>Співпрацюємо з багатьма судноплавними компаніями і вибір суден великий.</p>
+<p>Є можливість також  для бажаючих спробувати себе в ролі другого капітана судна. Пасажирами керованого вами корабля можуть бути Ваші родичі і друзі.</p>
+<p>Примітка:<br>Бажано орендувати судна заздалегідь, хоча б за місяць, коли буде можливість більшого вибору з точки зору їх комфорту, а також ціни та вільних днів/часу.</p>` } ] },
+    { title: "Романтика в Празі", items: [
+      { title: "Прогулянка на ретро-автомобілі",
+        price: "Вартість: від 110 євро/год.",
+        body: `<p>За вказаною вами адресою під’їде ефектний ретро-автомобіль із просторим шкіряним салоном та блискучими хромованими деталями (залежно від кількості гостей можна орендувати кілька машин одночасно). Весело котячись бруківкою, цей елегантний «ветеран» провезе вас головними вулицями та площами Златої Праги із зупинками для красивих світлин.</p>
+<div class="pr"><p>Вартість: від 110 євро/год.</p></div>
+<p>Прогулянку можна доповнити:</p>
+<ul><li>Вітальним напоєм (за бажанням — преміальний брют Bohemia Sekt у келихах);</li><li>Послугами професійного фотографа (від 150 євро/год.);</li><li>Супроводом ліцензованого гіда (75 євро/год.);</li><li>Прогулянкою на приватному комфортабельному кораблику, де можна замовити напої, закуски або гриль (від 250 євро/год. залежно від типу судна);</li><li>Обідом або вечерею в затишному ресторані (підбір та резервація столу під ваші смаки).</li></ul>` },
+      { title: "Вечір на панорамному кораблі із живою музикою", photo: "../images/vltava.jpg",
+        price: "Ціна:  79 євро/доросла особа",
+        body: `<p>Вечір на сучасному панорамному кораблеві "Кришталева вечеря"</p>
+<div class="pr"><p>Ціна:  79 євро/доросла особа (місця в центральній частині салону)<br>Ціна:  99 євро/доросла особа (місця біля вікон)<br>Ціна:  129 євро/доросла особа (місця в салоні)</p></div>
+<p>В ціні:</p>
+<ul><li>3 години плавання</li><li>вітальний напій на вибір</li><li>багатий шведський стіл(різні закуски, салати, нарізки сирні та мясні, головні теплі страви, гарніри, десерти)</li><li>приємна жива музика</li><li>wi-fi</li><li>аудіогід (аплікація в мобільному телефоні)</li></ul>
+<p>Плавання "на рівні" на надсучасному панорамному кораблі із розсувним прозорим дахом. На вас очікує смачна вечеря на протязі трьох годин спокійного милування памятками Златої Праги з борту  корабля, що неспішно пливе водами Влтави. Празький Град, Карлів міст, Рудольфінум, Народний театр відкриються для вас з іншого ракурсу.</p>
+<p>Корабель пропливатиме також через сторічний шлюз і Ви матимете змогу побачити знаменитий Танцюючий дім, скелі Вишеграду, з яких колись віщувала знаменита слов'янська княгиня і трохи відьми Лібуше.</p>
+<p>* для більшої зручності пропонується бронювання місця біля вікон</p>` },
+      { title: "Моцарт-вечеря в барочному стилі",
+        price: "175 євро/особа",
+        body: `<p>Прекрасна можливість провести незабутній вечір удвох при свічках у супроводі класичної музики та оперного співу в одному з найгарніших барокових залів Праги XVIII століття.</p>
+<p>Це унікальна, урочиста подія, яка вимагає відповідного дрес-коду (Evening Wear / Smart Casual).</p>
+<p>Кришталеві люстри, мармур, дзеркала та позолота барочногог залу  перенесуть вас ніби у романтичні часи XVIII cтоліття. Страви подаються суворо в перервах між виступами професійних виконавців, які співають арії з відомих опер Моцарта. Як відомо, сам маестро неодноразово відвідував Прагу, де його творчість мала колосальний успіх. Ви зможете насолодитися уривками з опери «Дон Жуан», прем'єра якої відбулася саме в Празі.</p>
+<p>На вибір пропонуються кілька цінових категорій (у партері або в лоджіях).</p>
+<div class="pr"><p>Вартість програми за одну особу</p><ul><li>Місце у лоджії та в партері за столиком для 2-ох осіб - 175 євро/особа</li><li>Місце за столом для 8 осіб - 150 євро/особа</li><li>Для дітей - знижки</li></ul></div>
+<p>В ціні вечеря із необженою кількістю напоїв.</p>
+<p>Вечеря проходить 1–2 рази на тиждень, переважно у вихідні дні. Необхідне завчасне бронювання.</p>
+<p>Вечерю можна доповнити:</p>
+<ul><li>Трансфером на ретро-автомобілі прямо до дверей залу</li><li>Вітальним напоєм в авто (Bohemia Sekt)</li><li>Фотосесією від професійного фотографа (від 150 євро/год.)</li></ul>` },
+      { title: "Елегантна вечеря в стилі 20-их років минулого століття та концерт  хітів Френка Сінатри",
+        price: "2 990 Kč/особа",
+        body: `<p>Це унікальна, урочиста подія, котра проходить в вишуканих інтерєрах на березі Влтави та  вимагає відповідного дрес-коду.</p>
+<p>Хіти безсмертного Френка Сінатри звучатимуть для вас у виконанні  відомих професійних виконавців  під живу музику.</p>
+<p>Вечеря подається перед концертом.</p>
+<div class="pr"><p>Ціна квитка на концерт з вечерею та напоями:</p><ul><li>2 990 Kč/особа за столом для 2-ох осіб</li><li>2 690 Kč/особа за столом для 2-ох осіб із обмеженим виглядом</li><li>2 690 Kč/особа за столом для 8-ми осіб в третьому ряді</li><li>2 490 Kč/особа за столом для 8-ми осіб в четвертому ряді</li><li>1 700 Kč/дитина до 12 років</li></ul></div>
+<p>Вечеря проходить 1–2 рази на тиждень, переважно у вихідні дні. Необхідне завчасне бронювання.</p>
+<p>Вечерю можна доповнити:</p>
+<ul><li>Трансфером на ретро-автомобілі прямо до дверей залу</li><li>Вітальним напоєм в авто (Bohemia Sekt)</li><li>Фотосесією від професійного фотографа (від 150 євро/год.)</li></ul>` },
+      { title: "День у замку. VIP",
+        price: "Ціна: від 250 євро/1 ніч/апартаменти  для 2 осіб в будній день",
+        body: `<p>Всього за годину їзди від Праги, серед мальовничої заміської природи, розташоване дивовижне місце. Сюди з'їжджаються поціновувачі високої кухні та преміального спокійного відпочинку. У цьому невеликому замку-шато панує витончена домашня атмосфера та  англійська аристократична елегантність в найменших деталях.  Ресторан замку за версією незалежної асоціації гурманів був визнаний не один раз найкращим у Чехії та здобув титул «Гранд-ресторан року».</p>
+<p>Замок пропонує цілий ряд відпочинкових тематичних пакетів різної цінової категорії із проживанням в апартментах( включно президенських), релаксом та високою кухнею. Щось ліпше такого  плану відпочинку складно запропонувати в Чехії, ніж відпочинок в цьому замку-шато.</p>
+<div class="pr"><p>Ціна: від 250 євро/1 ніч/апартаменти  для 2 осіб в будній день</p></div>
+<p>У вартість входить:</p>
+<ul><li>Відпочинок у сауні із озецем в парку замку</li><li>Релаксаційний массаж</li><li>Активний відпочинок в англійському парку замку: петанк, бадмінтон, крокет</li></ul>
+<p>* Додатково можна замовити дегустаційне меню з 5 страв у ресторані шато відповідно до поточної карти</p>
+<p>Продовжити вечір можна в затишній винотеці замку або в клубі «Алхімік», де представлено понад 1000 сортів вин і коньяків. Також на території діє сучасний спа-центр із великим вибором індивідуальних процедур.</p>
+<p>Транспортні послуги надаються за запитом за додаткову плату.</p>` },
+      { title: "Святкові обід/вечеря для гурманів та річковий круїз. VIP", photo: "../images/rodynne-sviato.jpg",
+        price: "Ціна дегустаційного обіду на 1 особу - 62 євро/обід + 41 євро/напої",
+        body: `<p>До ваших послуг — один із найкращих ресторанів Праги з видом на Карлів міст, який відвідувало безліч світових зірок.</p>
+<p>Вечір розпочнеться з круїзу (60/90 хв.) історичною частиною Праги на приватному елегантному судні з келихом елітного шампанського, після чого на вас чекає вишуканий дегустаційний обід або вечеря на терасі ресторану</p>
+<div class="pr"><p>Ціна дегустаційного обіду на 1 особу - 62 євро/обід + 41 євро/напої<br>Ціна дегустаційної вечері  на 1 особу - 157 євро/обід + 82 євро/напої<br>Ціна річкового круїзу:</p><ul><li>267 євро/60 хв.</li><li>432 євро/90 хв.</li></ul></div>` },
+      { title: "Винні  SPA для двох із дегустацією та сауною",
+        price: "Ціна за двох: 3 000 CZK (90 хвилин)",
+        body: `<p>Чехія славиться не лише пивом, а й дивовижними моравськими винами.</p>
+<p>Ми пропонуємо вам відчути цілющі та омолоджуючі властивості виноградної лози у приватному SPA-комплексі.</p>
+<p>На вас чекає повне усамітнення в окремих апартаментах, гідромасажна винна ванна (з додаванням червоного вина, екстрактів виноградних кісточок та аромаолій) та релаксаційне двоспальне  ліжко. У вартість  входить 2 пляшки вина.</p>
+<div class="pr"><ul><li>Ціна за двох: 3 000 CZK (90 хвилин) та  4 390 CZK (130 хвилин)</li><li>Є можливіть додатково замовити закуски та інші алкогольні напої</li></ul></div>` },
+      { title: "Пивні  SPA для двох із сауною",
+        price: "Ціна за двох: 3 000 CZK (90 хвилин)",
+        body: `<p>Чехія як відомо є пивною країною і тут можливо не лише скуштувати справжнісінького чеського пива, але й насолодитись пивними SPA.</p>
+<p>Ми пропонуємо вам відчути цілющі та омолоджуючі властивості пива  у приватному SPA-комплексі.</p>
+<p>На вас чекає повне усамітнення в окремих комфортабельних апартаментах, гідромасажна пивна ванна (з додаванням пивної основи) та релаксаційне двоспальне ліжко .</p>
+<p>У вартість входить необмежена кількість споживання пива, котре самі собі зможете наливати.</p>
+<div class="pr"><ul><li>Ціна за двох: 3 000 CZK (90 хвилин) та  4 390 CZK (130 хвилин)</li><li>Додатково плюс 30 хвилин щоразу як подарунок від закладу</li><li>Є можливіть додатково замовити закуски та інші алкогольні напої</li></ul></div>` },
+      { title: "Середньовічне шоу з вечерею «У короля Брабантського» та \"У павука\"",
+        price: "Ціна: 1400 крон / особа",
+        body: `<p>Запрошуємо вас до найстарішої та найвідомішої корчми Праги, заснованої ще у XV столітті. Свого часу її відвідували королі (зокрема Вацлав IV), алхіміки імператора Рудольфа II, Моцарт, а згодом — письменники Ярослав Гашек та Карел Чапек.</p>
+<div class="pr"><p>Ціна: 1400 крон / особа (шоу, ситна вечеря та повний безліміт напоїв), або 1050 крон / особа (з обмеженням щодо напоїв).</p></div>
+<p>На вас чекає дивовижна атмосфера Середньовіччя: жива старовинна музика, реалістичні бої на мечах, виступи танцівниць, вогняне шоу та вишукана проста</p>` } ] },
+    { title: "Польоти", items: [
+      { title: "Тандем-стрибки з парашутом",
+        price: "Ціна: 5 000 крон / особа",
+        body: `<div class="pr"><p>Ціна: 5 000 крон / особа</p></div>
+<p>Стрибок з парашутом у Празі з досвідченим інструктором за спиною — це найпростіший спосіб втілити свою мрію в реальність і відчути радість вільного польоту. Для цього не потрібна спеціальна підготовка чи медичне обстеження.</p>
+<p>Вік: від 8 до 100 років.</p>
+<p>На вас чекає короткий інструктаж перед польотом, посадка в літак і, нарешті, захопливий момент стрибка з висоти 4000 метрів. Неймовірне відчуття легкості, краса вільного польоту, легке тремтіння під час розкриття парашута та м'яке приземлення триватимуть усього кілька хвилин, але залишаться у вашій пам'яті на все життя.</p>
+<p>За бажанням можна додатково замовити фото- та відеозйомку.</p>
+<p>У вартість послуги входить:</p>
+<ul><li>Страховий поліс</li><li>Трансфер до аеродрому й назад (лише для осіб, які стрибають; супровід добирається самостійно за наданою геолокацією)</li><li>Прокат усього необхідного спорядження (з собою потрібно мати лише власне зручне взуття)</li></ul>
+<p>У подарунок ви отримаєте:</p>
+<ul><li>Сертифікат про здійснений політ</li><li>Фірмову футболку на пам'ять</li></ul>
+<p>Тривалість:<br>Увесь захід займе близько 4–6 годин, включаючи трансфер до аеродрому та назад у Прагу.</p>
+<p>Сезон:<br>Середина березня – кінець листопада.</p>
+<p>Важливо:</p>
+<ul><li>Особам, які не досягли 18 років, необхідний дозвіл батьків.</li><li>Людям старше 65 років, а також тим, чия вага перевищує 130 кг, необхідно заздалегідь проконсультуватися з лікарем.</li></ul>
+<p>Додаткові послуги:</p>
+<ul><li>Фото- та відеозйомка стрибка (відзнятий матеріал монтується у повноцінний «фільм» про ваш стрибок) — 2 500 крон / особа.</li><li>Відео- та фотозйомка + додаткове селфі — 3 000 крон / особа.</li></ul>
+<p>Бронювання відбувається за принципом: чим раніше, тим краще. Будь ласка, зв'яжіться з нами телефоном (дзвінок/SMS) або електронною поштою.</p>` },
+      { title: "Другим пілотом літака",
+        price: "Ціна: 6 900 крон",
+        body: `<p>Аеродроми Прага, Брно, Острава</p>
+<p>Чудова можливість спробувати себе в ролі пілота для тих, хто давно мріяв підкорити небо. У розпорядженні майбутніх авіаторів — тренувальні літаки празької аерошколи та досвідчені інструктори, а керування літаком проходить за принципом навчального водіння в автошколі.</p>
+<p>Запрошуємо здійснити політ на невеликому літаку як другий пілот. На вибір пропонується три види сучасних повітряних суден:</p>
+<div class="pr"><ul><li>Літак  Cessna 152<br>Ціна: 6 900 крон (20-30 хв. польоту та керування).<br>Особливості: у кабіні передбачено 2 місця (для пілота-інструктора та другого пілота, без пасажирів)</li><li>Літак Cessna 172<br>Ціна: 8 900 крон (60 хв. польоту та 20 хв. польоту)</li><li>Літак Cessna 172<br>Ціна: 7 900 крон (20-30 хв. польоту + 2 пасажири).<br>Особливості: чотиримісний літак (у кабіні: пілот, другий пілот та 2 пасажири). Максимальна загальна вага — 250 кг.</li></ul></div>
+<p>Примітки до польотів:</p>
+<ul><li>Тривалість польоту можна збільшити до 1 години за відповідну доплату.</li></ul>
+<p>Під керівництвом досвідченого інструктора авіаційної школи ви спробуєте себе в ролі другого пілота, самостійно керуючи літаком. Спеціальна підготовка не потрібна — шквал нових емоцій та адреналіну гарантовано!</p>
+<p>Перед вильотом ви ознайомитеся з літаком, детально обговорите сценарій польоту з командиром, сплануєте й позначите маршрут на карті, перевірите активацію повітряного простору, налаштуєте бортові прилади, визначите поточні погодні умови, проведете передпольотний огляд судна та отримаєте інструктаж на випадок надзвичайних ситуацій.</p>
+<ul><li>Вік: від 16 до 100 років.</li><li>Тривалість маршруту: 30 хв. або 1 год.</li></ul>
+<p>У вартість послуги входить:</p>
+<ul><li>Витрати на організацію польоту</li><li>Страховий поліс</li><li>Пам'ятне «посвідчення» пілота</li></ul>
+<p>Важливо:</p>
+<ul><li>Особам, які не досягли 18 років, потрібен дозвіл батьків.</li><li>Особам старше 65 років, а також клієнтам із вагою понад 110 кг необхідна попередня консультація лікаря.</li></ul>` },
+      { title: "Другим пілотом вертольоту",
+        price: "Ціна: 14 900 крон / 30 хвилин польоту",
+        body: `<p>Аеродроми Брно, Млада Болеслав, Плзень, Градець Краловий</p>
+<p>Спробуйте себе в ролі другого пілота вертольота під керівництвом досвідченого інструктора спеціалізованої аерошколи. Незабутні емоції та драйв гарантовано.</p>
+<p>Перед польотом ви ознайомитеся з гвинтокрилом, чотиримісним Robinson R44, детально обговорите план польоту з пілотом, дізнаєтеся про принципи керування, разом проведете передпольотну підготовку та отримаєте інструктаж на випадок надзвичайних ситуацій. Спеціальна підготовка та медичне обстеження не потрібні.</p>
+<ul><li>Вік: від 16 до 100 років.</li></ul>
+<p>Вертолітна аерошкола конкретно в Младе Болеславі функціонує на базі центру з продажу нових вертольотів американського виробництва. Також на території розташований чудовий сучасний ресторан із вишуканою кухнею. Школа й аеродром знаходяться приблизно за 70 км від Праги — це єдине місце поблизу столиці, де можна спробувати себе в ролі пілота гвинтокрила.</p>
+<p>У вартість послуги входить:</p>
+<ul><li>Витрати на організацію польоту</li><li>Страховий поліс</li><li>Пам'ятний сертифікат</li></ul>
+<div class="pr"><p>Вертоліт Robinson R44</p><ul><li>Ціна: 14 900 крон / 30 хвилин польоту</li></ul></div>
+<p>Примітки:<br>* За бажанням тривалість польоту можна збільшити</p>
+<ul><li>Особам, які не досягли 18 років, потрібен дозвіл батьків.</li><li>Особам старше 65 років, а також тим, хто важить понад 110 кг, необхідна консультація лікаря.</li></ul>` },
+      { title: "Оглядові польоти над замками та природними памятками" },
+      { title: "Аеро таксі" } ] },
+    { title: "Чеське пиво", items: [
+      { title: "Пивні тури по Празі" },
+      { title: "Знамениті чеські броварні" },
+      { title: "Зварити самому пиво" },
+      { title: "Пивні ванни" } ] } ] },
+  { title: "Додаткові послуги", photo: "../images/transfer.jpg", lang: "українська, англійська, французька",
+    pending: true,
+    subs: [{ title: "Послуги", items: [
+      { title: "Трансфер з аеропорту", photo: "../images/transfer.jpg" },
+      { title: "Програма перебування", photo: "../images/prohrama.jpg" } ] }] }
+];
+
+const LION = "../images/logo-mark-red.png";
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+let current = 2; /* відкривається «Дозвілля» — там уже є тексти */
+
+function renderTabs() {
+  document.getElementById("tabs").innerHTML = CATALOG.map((c, i) =>
+    `<button type="button" class="tab" data-cat="${i}" aria-pressed="${i === current}"><b>${esc(c.title)}</b><span class="ph"><img src="${c.photo}" alt=""></span></button>`).join("");
+}
+function renderCat() {
+  document.getElementById("cat").innerHTML = CATALOG.map((c, i) =>
+    `<li><button type="button" data-cat="${i}" class="${i === current ? "on" : ""}">${esc(c.title)}</button>` +
+    (c.subs.length > 1 ? `<ul>${c.subs.map((s, j) => `<li><button type="button" data-cat="${i}" data-sub="${j}">${esc(s.title)}</button></li>`).join("")}</ul>` : "") +
+    `</li>`).join("");
+}
+function renderContent() {
+  const c = CATALOG[current];
+  document.getElementById("content").innerHTML =
+    `<h2>${esc(c.title)}</h2><p class="lang">Мови: ${esc(c.lang)}</p>` +
+    (c.pending ? `<p class="empty-note">Тексти для цієї рубрики ще готуються — нижче приклад карток.</p>` : "") +
+    c.subs.map((s, j) => `<div class="sub" id="sub-${j}">${c.subs.length > 1 ? `<h3>${esc(s.title)}</h3>` : ""}<div class="cards">` +
+      s.items.map((it, k) => `<button type="button" class="card" data-sub="${j}" data-item="${k}">
+        <h4>${esc(it.title)}</h4>
+        <span class="price">${it.price ? esc(it.price) : (it.body ? "" : "текст готується")}</span>
+        <span class="pic${it.photo ? "" : " empty"}"><img src="${it.photo || LION}" alt=""></span></button>`).join("") +
+      `</div></div>`).join("");
+}
+function render() { renderTabs(); renderCat(); renderContent(); }
+
+function go(i, sub) {
+  current = i; render();
+  const t = sub != null ? document.getElementById("sub-" + sub) : document.getElementById("content");
+  t.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+  if (matchMedia("(max-width: 760px)").matches) document.getElementById("catalog").open = false;
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-cat],[data-go]");
+  if (b && !b.classList.contains("card")) { e.preventDefault(); go(+(b.dataset.cat ?? b.dataset.go), b.dataset.sub != null ? +b.dataset.sub : null); return; }
+  const card = e.target.closest(".card");
+  if (card) openItem(CATALOG[current].subs[+card.dataset.sub].items[+card.dataset.item]);
+});
+
+const dlg = document.getElementById("dlg");
+function openItem(it) {
+  document.getElementById("dlg-body").innerHTML = `<h2>${esc(it.title)}</h2>` +
+    (it.photo ? `<img class="hero" src="${it.photo}" alt="">` : "") +
+    (it.body || `<p class="todo">Текст готується.</p>`) +
+    `<a class="ask" href="tel:+420775423334">Замовити: +420 775 423 334</a>`;
+  dlg.showModal(); dlg.scrollTop = 0;
+}
+document.getElementById("dlg-close").onclick = () => dlg.close();
+dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
+
+/* Контури Праги (зліва направо): Петршин, Град із собором св. Віта, Мала Страна зі св. Миколаєм,
+   Карлів міст із вежами, Старе Місто з ратушею і Тинським храмом, Вишеград. Земля — y=150. */
+function skyline() {
+  const G = 150, P = [];
+  const poly = pts => P.push(`<polygon points="${pts.map(p => p.join(",")).join(" ")}"/>`);
+  const rect = (x, w, h) => poly([[x, G], [x, G - h], [x + w, G - h], [x + w, G]]);
+  const house = (x, w, h, r = w * .5) => poly([[x, G], [x, G - h], [x + w / 2, G - h - r], [x + w, G - h], [x + w, G]]);
+  const tower = (x, w, h, s, pin = 0) => {
+    poly([[x, G], [x, G - h], [x + w / 2, G - h - s], [x + w, G - h], [x + w, G]]);
+    if (pin) { poly([[x - 2, G - h + 2], [x, G - h - pin], [x + 3, G - h + 2]]); poly([[x + w - 3, G - h + 2], [x + w, G - h - pin], [x + w + 2, G - h + 2]]); }
+  };
+  const dome = (x, w, h, lant) => { rect(x, w, h); P.push(`<path d="M${x} ${G - h}A${w / 2} ${w * .6} 0 0 1 ${x + w} ${G - h}Z"/>`); rect(x + w / 2 - 2, 4, h + w * .6 + lant); };
+  for (let x = 0; x < 1600;) {            /* дахи будинків */
+    const w = 22 + (x * 7) % 13, h = 24 + (x * 13) % 19;
+    if (x < 650 || x > 990) house(x, w, h);
+    x += w - 2;
+  }
+  poly([[0, G], [0, G - 22], [90, G - 26], [190, G - 34], [480, G - 36], [560, G - 18], [610, G - 4], [610, G]]); /* пагорб Граду */
+  tower(40, 8, 88, 10);                                                   /* Петршинська вежа */
+  rect(180, 300, 52); house(176, 30, 52, 10); house(470, 26, 50, 10);     /* палаци Граду */
+  house(300, 72, 64, 16); tower(300, 12, 80, 24, 5); tower(316, 12, 80, 24, 5); dome(372, 22, 86, 10); /* св. Віт */
+  tower(430, 8, 66, 12); tower(442, 8, 66, 12);                          /* св. Юрій */
+  dome(540, 36, 56, 12); tower(584, 12, 70, 18);                          /* св. Миколай */
+  tower(612, 22, 58, 22); tower(638, 16, 46, 16);                         /* малостранські мостові вежі */
+  rect(660, 322, 20);                                                     /* Карлів міст */
+  for (let i = 0; i < 8; i++) P.push(`<ellipse class="gap" cx="${680 + i * 40}" cy="${G}" rx="15" ry="13"/>`);
+  tower(980, 26, 64, 26, 6);                                              /* Староміська мостова вежа */
+  tower(1090, 16, 74, 14, 4);                                             /* ратуша */
+  house(1170, 42, 50, 14); tower(1170, 16, 72, 32, 6); tower(1196, 16, 72, 32, 6); /* Тинський храм */
+  dome(1300, 32, 46, 10);
+  poly([[1420, G], [1440, G - 14], [1560, G - 16], [1600, G - 8], [1600, G]]);    /* Вишеград */
+  tower(1480, 9, 74, 26); tower(1493, 9, 74, 26);
+  document.getElementById("sky").innerHTML = P.join("");
+}
+skyline();
+
+if (matchMedia("(max-width: 760px)").matches) document.getElementById("catalog").open = false;
+render();
+</script>
