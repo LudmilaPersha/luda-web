@@ -36,7 +36,7 @@
   header.top { position: relative; overflow: hidden; border-bottom: 1px solid var(--line); background: var(--paper); }
   .head { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 24px; padding-block: 22px; position: relative; z-index: 1; }
   .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--red); }
-  .brand img { height: 64px; width: auto; display: block; }
+  .brand img { height: 120px; width: auto; display: block; } /* круглий логотип (варіант B), назва вже в ньому */
   .brand span { font-family: var(--head); font-weight: 700; line-height: 1.1; font-size: 15px; letter-spacing: .04em; text-transform: uppercase; }
   .brand small { display: block; font-weight: 400; font-style: italic; text-transform: none; letter-spacing: 0; font-size: 14px; margin-top: 3px; }
   .title { text-align: center; }
@@ -158,7 +158,7 @@
     .head { grid-template-columns: 1fr auto; gap: 12px; }
     .title { grid-column: 1 / -1; grid-row: 2; }
     .title nav { display: none; }
-    .brand img { height: 48px; }
+    .brand img { height: 88px; }
     .contact { font-size: 14px; }
     .tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; padding-top: 18px; }
     .tab b { font-size: 14px; margin: 0 6px; }
@@ -180,8 +180,7 @@
 <header class="top">
   <div class="wrap head">
     <a class="brand" href="#">
-      <img src="images/logo-mark-red.png" alt="">
-      <span>Перший магазин<br>вражень<small>в Чехії</small></span>
+      <img src="images/logo-b.png" alt="Перший магазин вражень в Чехії" width="296" height="280">
     </a>
     <div class="title">
       <h1>Індивідуальні тури в Прагу</h1>
