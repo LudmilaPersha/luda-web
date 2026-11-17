@@ -112,6 +112,40 @@
   .close { position: absolute; top: 14px; right: 14px; width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--line); background: var(--paper-2); font-size: 22px; line-height: 1; cursor: pointer; color: var(--ink); }
   .dlg .ask { display: inline-block; margin-top: 8px; background: var(--red); color: #fff; text-decoration: none; padding: 10px 20px; border-radius: 6px; font-weight: 700; }
 
+  /* ── ПРО НАС: фото зліва, текст Людмили справа ── */
+  .about { display: grid; grid-template-columns: minmax(0, 520px) minmax(0, 1fr); gap: clamp(28px, 5vw, 60px); align-items: start; padding-block: 8px 64px; scroll-margin-top: 16px; }
+  .about img { width: 100%; height: auto; display: block; border-radius: 10px; border: 1px solid var(--line); box-shadow: 0 6px 18px rgb(59 43 29 / .22); }
+  .about .text { max-width: 60ch; }
+  .about h2 { font-family: var(--head); font-weight: 700; color: var(--red); font-size: clamp(24px, 2.6vw, 32px); line-height: 1.2; margin: 0 0 6px; text-wrap: balance; }
+  .about .kicker { font-family: var(--head); font-style: italic; color: var(--muted); margin: 0 0 18px; }
+  .about p { margin: 0 0 14px; }
+  @media (max-width: 760px) { .about { grid-template-columns: 1fr; } }
+
+  /* ── КОНТАКТИ: телефон і e-mail зліва, месенджери та соцмережі справа ── */
+  .contacts { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px clamp(28px, 5vw, 60px); background: var(--paper-2); border: 1px solid var(--line); border-radius: 12px; padding: clamp(22px, 4vw, 40px); margin-bottom: 56px; scroll-margin-top: 16px; }
+  .contacts h2 { font-family: var(--head); font-weight: 700; color: var(--red); font-size: clamp(22px, 2.4vw, 30px); line-height: 1.2; margin: 0 0 14px; text-wrap: balance; }
+  .contacts .big { display: inline-block; font-size: clamp(24px, 3vw, 30px); font-weight: 700; text-decoration: none; font-variant-numeric: tabular-nums; }
+  .contacts .hint { color: var(--muted); margin: 6px 0 16px; }
+  .contacts .call { display: inline-block; background: var(--red); color: #fff; text-decoration: none; padding: 10px 22px; border-radius: 6px; font-weight: 700; }
+  .contacts .email { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 18px; }
+  .contacts .email a { text-decoration: none; }
+  .contacts .copy { appearance: none; border: 1px solid var(--line); background: var(--paper); color: var(--ink); border-radius: 6px; padding: 4px 10px; font: inherit; font-size: 13px; cursor: pointer; }
+  .contacts ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+  .contacts .lists { display: grid; gap: 22px; align-content: start; }
+  .contacts .lists h3 { font-family: var(--head); font-weight: 700; font-size: 17px; margin: 0 0 10px; }
+  .contacts ul a { display: flex; align-items: center; gap: 12px; text-decoration: none; min-width: 0; overflow-wrap: anywhere; }
+  .contacts ul a:hover span { color: var(--red); }
+  .contacts .ico { flex: none; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; color: #fff; }
+  .contacts .ico svg { width: 20px; height: 20px; }
+  .ico.wa { background: #25a244; } .ico.tg { background: #2a9ed8; } .ico.vb { background: #7360f2; }
+  .ico.fb { background: #1877f2; } .ico.ig { background: #d6336c; } .ico.tt { background: #111; }
+  @media (max-width: 760px) { .contacts { grid-template-columns: 1fr; } }
+
+  /* ── ПІДВАЛ: дані підприємця (за чеським законом: ім'я, IČO, адреса) ── */
+  footer .legal { display: grid; gap: 3px; }
+  footer .legal .me { color: var(--ink); }
+  footer .legal .small { font-size: 13px; }
+
   /* Контури Праги окремою смугою під текстом шапки (текст на чистому тлі).
      Град, св. Віт, св. Миколай, Карлів міст, Тин, Вишеград — як на старому сайті, але не під текстом. */
   .sky { display: block; width: 100%; height: clamp(48px, 7.5vw, 110px); fill: var(--sky); } /* смуга під текстом шапки */
@@ -170,7 +204,7 @@
   <div class="tabs" id="tabs"></div>
   <div class="bar">
     <div class="orn" aria-hidden="true"><svg viewBox="0 0 90 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M45 11c-5-8-15-9-17-2s8 9 11 3M45 11c5-8 15-9 17 2s-8 9-11 3"/><path d="M28 9c-6-5-14-3-15 2m49-2c6-5 14-3 15 2"/><circle cx="45" cy="11" r="2.4" fill="currentColor"/></svg></div>
-    <nav class="menu" aria-label="Меню"><a href="#">Головна</a><a href="#">Про нас</a><a href="#">Інформація про Чехію</a><a href="#">Відгуки туристів</a><a href="#">Контакти</a></nav>
+    <nav class="menu" aria-label="Меню"><a href="#">Головна</a><a href="#about">Про нас</a><a href="#">Інформація про Чехію</a><a href="#">Відгуки туристів</a><a href="#contacts">Контакти</a></nav>
     <div class="orn" aria-hidden="true"><svg viewBox="0 0 90 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M45 11c-5-8-15-9-17-2s8 9 11 3M45 11c5-8 15-9 17 2s-8 9-11 3"/><path d="M28 9c-6-5-14-3-15 2m49-2c6-5 14-3 15 2"/><circle cx="45" cy="11" r="2.4" fill="currentColor"/></svg></div>
   </div>
 </div>
@@ -185,7 +219,59 @@
   <section class="content" id="content" aria-live="polite"></section>
 </div>
 
-<footer><div class="wrap">© Перший магазин вражень в Чехії, 2011–2026</div></footer>
+<!-- ПРО НАС — текст Людмили без змін (той самий, що на першому сайті) -->
+<section class="wrap about" id="about">
+  <img src="../images/about.jpg" alt="Людмила та Іванка, гіди по Празі" width="1000" height="667" loading="lazy">
+  <div class="text">
+    <h2>Вітаємо у Златій Празі та мальовничій Чехії!</h2>
+    <p class="kicker">Про нас</p>
+    <p>Мене звати Людмила Щербинина. Я — український ліцензований гід у Празі та по всій Чехії з понад 15-річним досвідом. Разом із донькою Іванкою, яка закохує в Злату Прагу туристів з усього світу також французькою та англійською мовами в рамках Prague City Tourism (представницької організації Магістрату м. Праги), пропонуємо не просто екскурсії, а справжні емоції та комфортний відпочинок.</p>
+    <p>Понад 20 років тому Чехія стала для нас другим домом, і ми з радістю закохуємо в цю дивовижну країну мандрівників з усього світу.</p>
+    <p>Ще 2012 року я заснувала «Перший магазин вражень» у Чехії, щоб пропонувати не лише екскурсії, а й цікаве дозвілля.</p>
+  </div>
+</section>
+
+<!-- КОНТАКТИ — ті самі дані, що на першому сайті. Номер міняти в усіх href і в тексті -->
+<div class="wrap">
+  <section class="contacts" id="contacts">
+    <div>
+      <h2>Напишіть нам, і ми підберемо програму</h2>
+      <a class="big" href="tel:+420775423334">+420 775 423 334</a>
+      <p class="hint">Цей самий номер — у WhatsApp, Telegram і Viber.<br>Відповідаємо протягом дня.</p>
+      <a class="call" href="tel:+420775423334">Подзвонити</a>
+      <div class="email">
+        <a href="mailto:czvpodarok@seznam.cz">czvpodarok@seznam.cz</a>
+        <button type="button" class="copy" id="copy-email">Скопіювати e-mail</button>
+      </div>
+    </div>
+    <div class="lists">
+      <div>
+        <h3>Месенджери</h3>
+        <ul>
+          <li><a href="https://wa.me/420775423334" target="_blank" rel="noopener"><i class="ico wa"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3a9 9 0 0 0-7.8 13.5L3 21l4.6-1.2A9 9 0 1 0 12 3zm4.6 12.6c-.2.6-1.1 1.1-1.6 1.2-.4 0-.9.1-2.9-.7-2.4-1-4-3.4-4.1-3.6-.1-.2-1-1.3-1-2.5s.6-1.8.9-2c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.1.1.3 0 .5l-.4.6-.3.3c-.1.1-.3.3-.1.5.1.3.6 1 1.3 1.6.9.8 1.6 1 1.9 1.1.2.1.4.1.5-.1l.7-.9c.2-.2.3-.2.5-.1l1.8.9c.3.1.4.2.5.3.1.2.1.7-.1 1.3z"/></svg></i><span>WhatsApp</span></a></li>
+          <li><a href="https://t.me/+420775423334" target="_blank" rel="noopener"><i class="ico tg"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.7 4.3 2.9 11.2c-.8.3-.8 1.2 0 1.5l4.4 1.4 1.7 5.3c.2.6.9.8 1.4.4l2.5-2.1 4.6 3.4c.6.4 1.4.1 1.5-.6l3-14.3c.2-.8-.6-1.4-1.3-1.1zM9.6 14l-.4 3.4-1.2-3.8 9.3-6.1z"/></svg></i><span>Telegram</span></a></li>
+          <li><a href="viber://chat?number=%2B420775423334"><i class="ico vb"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.6 3.8c.4-.1.8 0 1.1.3l2 2.4c.3.4.3.9 0 1.3l-1.1 1.2a10 10 0 0 0 6.4 6.4l1.2-1.1c.4-.3.9-.3 1.3 0l2.4 2c.3.3.4.7.3 1.1-.5 1.7-2 2.8-3.7 2.6C9.5 19.4 4.6 14.5 4 7.5 3.8 5.8 4.9 4.3 6.6 3.8z"/></svg></i><span>Viber</span></a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Соцмережі</h3>
+        <ul>
+          <li><a href="https://www.facebook.com/share/1CnAf3CfpN/" target="_blank" rel="noopener"><i class="ico fb"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.5 21v-7.5H16l.4-3H13.5V8.6c0-.9.3-1.5 1.5-1.5h1.6V4.4c-.3 0-1.2-.1-2.3-.1-2.3 0-3.8 1.4-3.8 3.9v2.3H8v3h2.5V21z"/></svg></i><span>Facebook</span></a></li>
+          <li><a href="https://www.instagram.com/prague_guide_lyudmyla" target="_blank" rel="noopener"><i class="ico ig"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="5"/><circle cx="12" cy="12" r="3.6"/><circle cx="17" cy="7" r=".8" fill="currentColor"/></svg></i><span>@prague_guide_lyudmyla</span></a></li>
+          <li><a href="https://www.tiktok.com/@ludmila_praha_gid" target="_blank" rel="noopener"><i class="ico tt"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 3h3c.2 1.8 1.4 3.2 3 3.5v3c-1.1 0-2.1-.3-3-.8V15a6 6 0 1 1-6-6v3.1a2.9 2.9 0 1 0 3 2.9z"/></svg></i><span>@ludmila_praha_gid</span></a></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <div class="wrap legal">
+    <div class="me">Ludmila Ščerbinina (Людмила Щербинина) · IČO 01073532</div>
+    <div>Sadová 339, Minice, 278 01 Kralupy nad Vltavou</div>
+    <div class="small">Fyzická osoba podnikající dle živnostenského zákona, zapsaná v živnostenském rejstříku. · © Перший магазин вражень в Чехії, 2011–2026</div>
+  </div>
+</footer>
 
 <dialog id="dlg"><button class="close" id="dlg-close" aria-label="Закрити">×</button><div class="dlg" id="dlg-body"></div></dialog>
 
@@ -445,6 +531,14 @@ function skyline() {
   document.getElementById("sky").innerHTML = P.join("");
 }
 skyline();
+
+/* Кнопка «Скопіювати e-mail» → «Скопійовано ✓»; якщо буфер недоступний — виділяємо адресу */
+document.getElementById("copy-email").addEventListener("click", e => {
+  const btn = e.currentTarget, mail = btn.previousElementSibling;
+  const done = () => { btn.textContent = "Скопійовано ✓"; setTimeout(() => btn.textContent = "Скопіювати e-mail", 2000); };
+  const select = () => { const r = document.createRange(); r.selectNodeContents(mail); const s = getSelection(); s.removeAllRanges(); s.addRange(r); };
+  try { navigator.clipboard.writeText(mail.textContent).then(done, select); } catch (_) { select(); }
+});
 
 if (matchMedia("(max-width: 760px)").matches) document.getElementById("catalog").open = false;
 render();
