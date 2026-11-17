@@ -21,6 +21,8 @@
     --ink: #3b2b1d;       /* основний текст */
     --muted: #7b6650;     /* другорядний текст */
     --line: #dcc79c;      /* тонкі лінії */
+    --sky: #eee3c6;       /* контури Праги в шапці — ледь помітні */
+    --sky-strip: #e6d7ae; /* варіант B: смуга під текстом — трохи темніша, бо тексту на ній немає */
     --head: "PT Serif", Georgia, "Times New Roman", serif;
     --font: "PT Sans", "Segoe UI", Arial, sans-serif;
     color-scheme: light;
@@ -32,9 +34,19 @@
   :focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
 
   /* ── ШАПКА: лев зліва · назва по центру · контакти справа ── */
-  header.top { position: relative; overflow: hidden; border-bottom: 1px solid var(--line); background: linear-gradient(var(--paper-2), var(--paper)); }
-  header.top::after { content: ""; position: absolute; inset: auto 0 0; height: 70%; background: url(images/logo-mark-red.png) right -40px bottom -10px / auto 100% no-repeat; opacity: .06; pointer-events: none; } /* ледь помітний силует Праги */
-  .head { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 24px; padding-block: 18px; position: relative; z-index: 1; }
+  header.top { position: relative; overflow: hidden; border-bottom: 1px solid var(--line); background: var(--paper); }
+  /* Контури Праги на тлі шапки, як на старому сайті: Град, св. Віт, св. Миколай, Карлів міст, Тин, Вишеград */
+  .sky { position: absolute; inset: 0; width: 100%; height: 100%; fill: var(--sky); pointer-events: none; }
+  .sky .gap { fill: var(--paper); } /* арки моста */
+  /* ВАРІАНТ B: контури Праги окремою смугою ПІД текстом шапки (текст на чистому тлі) */
+  header.top.below { display: flex; flex-direction: column; }
+  header.top.below .sky { position: static; order: 2; height: clamp(48px, 7.5vw, 110px); fill: var(--sky-strip); }
+  header.top.below .head { padding-block: 22px 6px; }
+  /* Перемикач варіантів — лише для пілота */
+  .variant { position: fixed; right: max(12px, env(safe-area-inset-right, 0px)); bottom: max(12px, env(safe-area-inset-bottom, 0px)); z-index: 20; display: flex; gap: 4px; align-items: center; background: var(--cream); border: 1px solid var(--line); border-radius: 999px; padding: 4px 4px 4px 12px; font-size: 13px; box-shadow: 0 4px 14px rgb(59 43 29 / .18); }
+  .variant button { appearance: none; border: 0; border-radius: 999px; padding: 5px 12px; font: inherit; cursor: pointer; background: none; color: var(--ink); }
+  .variant button[aria-pressed="true"] { background: var(--red); color: #fff; }
+  .head { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 24px; padding-block: 22px 34px; position: relative; z-index: 1; }
   .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--red); }
   .brand img { height: 64px; width: auto; display: block; }
   .brand span { font-family: var(--head); font-weight: 700; line-height: 1.1; font-size: 15px; letter-spacing: .04em; text-transform: uppercase; }
@@ -79,6 +91,8 @@
   .cat button:hover, .cat button.on { color: var(--red); }
   .cat ul { list-style: none; margin: 0 0 6px; padding: 0 0 0 14px; border-left: 1px solid var(--line); }
   .cat ul button { padding: 3px 0; }
+  aside details > summary { list-style: none; }
+  aside details > summary::-webkit-details-marker { display: none; }
   aside .note { margin-top: 22px; font-size: 14px; color: var(--muted); }
 
   .content { min-width: 0; }
@@ -138,6 +152,7 @@
 </style>
 
 <header class="top">
+  <svg class="sky" id="sky" viewBox="0 0 1600 160" preserveAspectRatio="xMidYMax slice" aria-hidden="true"></svg>
   <div class="wrap head">
     <a class="brand" href="#">
       <img src="images/logo-mark-red.png" alt="">
@@ -179,6 +194,11 @@
 </div>
 
 <footer><div class="wrap">© Перший магазин вражень в Чехії, 2011–2026</div></footer>
+
+<div class="variant" role="group" aria-label="Фон шапки">Фон шапки:
+  <button type="button" data-v="a" aria-pressed="false">A за текстом</button>
+  <button type="button" data-v="b" aria-pressed="true">B під текстом</button>
+</div>
 
 <dialog id="dlg"><button class="close" id="dlg-close" aria-label="Закрити">×</button><div class="dlg" id="dlg-body"></div></dialog>
 
@@ -402,6 +422,51 @@ function openItem(it) {
 }
 document.getElementById("dlg-close").onclick = () => dlg.close();
 dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
+
+/* Контури Праги (зліва направо): Петршин, Град із собором св. Віта, Мала Страна зі св. Миколаєм,
+   Карлів міст із вежами, Старе Місто з ратушею і Тинським храмом, Вишеград. Земля — y=150. */
+function skyline() {
+  const G = 150, P = [];
+  const poly = pts => P.push(`<polygon points="${pts.map(p => p.join(",")).join(" ")}"/>`);
+  const rect = (x, w, h) => poly([[x, G], [x, G - h], [x + w, G - h], [x + w, G]]);
+  const house = (x, w, h, r = w * .5) => poly([[x, G], [x, G - h], [x + w / 2, G - h - r], [x + w, G - h], [x + w, G]]);
+  const tower = (x, w, h, s, pin = 0) => {
+    poly([[x, G], [x, G - h], [x + w / 2, G - h - s], [x + w, G - h], [x + w, G]]);
+    if (pin) { poly([[x - 2, G - h + 2], [x, G - h - pin], [x + 3, G - h + 2]]); poly([[x + w - 3, G - h + 2], [x + w, G - h - pin], [x + w + 2, G - h + 2]]); }
+  };
+  const dome = (x, w, h, lant) => { rect(x, w, h); P.push(`<path d="M${x} ${G - h}A${w / 2} ${w * .6} 0 0 1 ${x + w} ${G - h}Z"/>`); rect(x + w / 2 - 2, 4, h + w * .6 + lant); };
+  for (let x = 0; x < 1600;) {            /* дахи будинків */
+    const w = 22 + (x * 7) % 13, h = 24 + (x * 13) % 19;
+    if (x < 650 || x > 990) house(x, w, h);
+    x += w - 2;
+  }
+  poly([[0, G], [0, G - 22], [90, G - 26], [190, G - 34], [480, G - 36], [560, G - 18], [610, G - 4], [610, G]]); /* пагорб Граду */
+  tower(40, 8, 88, 10);                                                   /* Петршинська вежа */
+  rect(180, 300, 52); house(176, 30, 52, 10); house(470, 26, 50, 10);     /* палаци Граду */
+  house(300, 72, 64, 16); tower(300, 12, 80, 24, 5); tower(316, 12, 80, 24, 5); dome(372, 22, 86, 10); /* св. Віт */
+  tower(430, 8, 66, 12); tower(442, 8, 66, 12);                          /* св. Юрій */
+  dome(540, 36, 56, 12); tower(584, 12, 70, 18);                          /* св. Миколай */
+  tower(612, 22, 58, 22); tower(638, 16, 46, 16);                         /* малостранські мостові вежі */
+  rect(660, 322, 20);                                                     /* Карлів міст */
+  for (let i = 0; i < 8; i++) P.push(`<ellipse class="gap" cx="${680 + i * 40}" cy="${G}" rx="15" ry="13"/>`);
+  tower(980, 26, 64, 26, 6);                                              /* Староміська мостова вежа */
+  tower(1090, 16, 74, 14, 4);                                             /* ратуша */
+  house(1170, 42, 50, 14); tower(1170, 16, 72, 32, 6); tower(1196, 16, 72, 32, 6); /* Тинський храм */
+  dome(1300, 32, 46, 10);
+  poly([[1420, G], [1440, G - 14], [1560, G - 16], [1600, G - 8], [1600, G]]);    /* Вишеград */
+  tower(1480, 9, 74, 26); tower(1493, 9, 74, 26);
+  document.getElementById("sky").innerHTML = P.join("");
+}
+skyline();
+
+/* Варіант A — контури за текстом; B — смугою під текстом (обрізаємо порожнє небо зверху) */
+function setVariant(v) {
+  document.querySelector("header.top").classList.toggle("below", v === "b");
+  document.getElementById("sky").setAttribute("viewBox", v === "b" ? "0 40 1600 112" : "0 0 1600 160");
+  document.querySelectorAll(".variant button").forEach(b => b.setAttribute("aria-pressed", b.dataset.v === v));
+}
+document.querySelectorAll(".variant button").forEach(b => b.onclick = () => setVariant(b.dataset.v));
+setVariant("b");
 
 if (matchMedia("(max-width: 760px)").matches) document.getElementById("catalog").open = false;
 render();
