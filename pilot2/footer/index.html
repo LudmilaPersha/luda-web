@@ -206,7 +206,7 @@
   <div class="tabs" id="tabs"></div>
   <div class="bar">
     <div class="orn" aria-hidden="true"><svg viewBox="0 0 160 40" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round"><g><path d="M80 23C77 12 65 8 59 13c-5 5-1 13 5 11 4-1 3-7-1-6"/><path d="M59 18c-8 8-20 10-26 4-4-4 0-9 4-7 3 2 1 6-2 5"/><path d="M33 22c-6 2-13 0-19-2"/><path class="lf" d="M51 12c-4-6-11-7-15-4 5 1 10 3 15 4z"/><path class="lf" d="M47 25c-2 5-7 7-11 6 3-3 7-5 11-6z"/></g><g transform="matrix(-1 0 0 1 160 0)"><path d="M80 23C77 12 65 8 59 13c-5 5-1 13 5 11 4-1 3-7-1-6"/><path d="M59 18c-8 8-20 10-26 4-4-4 0-9 4-7 3 2 1 6-2 5"/><path d="M33 22c-6 2-13 0-19-2"/><path class="lf" d="M51 12c-4-6-11-7-15-4 5 1 10 3 15 4z"/><path class="lf" d="M47 25c-2 5-7 7-11 6 3-3 7-5 11-6z"/></g><path class="lf" d="M80 16l4 6-4 6-4-6z"/></svg></div>
-    <nav class="menu" aria-label="Меню"><a href="#">Головна</a><a href="#about">Про нас</a><a href="#">Інформація про Чехію</a><a href="#">Відгуки туристів</a><a href="#contacts">Контакти</a></nav>
+    <nav class="menu" aria-label="Меню"><a href="#" data-go="-1">Головна</a><a href="#about">Про нас</a><a href="#">Інформація про Чехію</a><a href="#">Відгуки туристів</a><a href="#contacts">Контакти</a></nav>
     <div class="orn" aria-hidden="true"><svg viewBox="0 0 160 40" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round"><g><path d="M80 23C77 12 65 8 59 13c-5 5-1 13 5 11 4-1 3-7-1-6"/><path d="M59 18c-8 8-20 10-26 4-4-4 0-9 4-7 3 2 1 6-2 5"/><path d="M33 22c-6 2-13 0-19-2"/><path class="lf" d="M51 12c-4-6-11-7-15-4 5 1 10 3 15 4z"/><path class="lf" d="M47 25c-2 5-7 7-11 6 3-3 7-5 11-6z"/></g><g transform="matrix(-1 0 0 1 160 0)"><path d="M80 23C77 12 65 8 59 13c-5 5-1 13 5 11 4-1 3-7-1-6"/><path d="M59 18c-8 8-20 10-26 4-4-4 0-9 4-7 3 2 1 6-2 5"/><path d="M33 22c-6 2-13 0-19-2"/><path class="lf" d="M51 12c-4-6-11-7-15-4 5 1 10 3 15 4z"/><path class="lf" d="M47 25c-2 5-7 7-11 6 3-3 7-5 11-6z"/></g><path class="lf" d="M80 16l4 6-4 6-4-6z"/></svg></div>
   </div>
 </div>
@@ -1345,7 +1345,19 @@ const CATALOG = [
 
 const LION = "../images/logo-mark-red.png";
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-let current = 2; /* відкривається «Дозвілля» — там уже є тексти */
+let current = -1; /* -1 = «Головна»: обрані пропозиції */
+
+/* «Головна» — пропозиції, які Люда винесла на головну, у її порядку (шукаємо за назвою картки) */
+const FEATURED = ["Все найцікавіше в Празі", "Легенди і Містика Праги(для дітей)",
+  "Слідами героїв Дена Брауна в Празі: Таємниця Таємниць", "Тандем-стрибки з парашутом", "Пивні та винні ванни",
+  "Чеський Крумлов і замок Глубока", "Карлові Вари, завод «Мозер», термальні лазні, замок Локет*",
+  "З Праги до Дрездена та національного парку Саксонська Швейцарія",
+  "Замок Конопіште. Замок Орлик. Броварня Velkopopovický Kozel"].map(t => {
+  for (const [c, cat] of CATALOG.entries()) for (const [s, sub] of cat.subs.entries()) {
+    const k = sub.items.findIndex(it => it.title === t);
+    if (k >= 0) return [c, s, k];
+  }
+}).filter(Boolean);
 
 function renderTabs() {
   document.getElementById("tabs").innerHTML = CATALOG.map((c, i) =>
@@ -1357,16 +1369,24 @@ function renderCat() {
     (c.subs.length > 1 ? `<ul>${c.subs.map((s, j) => `<li><button type="button" data-cat="${i}" data-sub="${j}">${esc(s.title)}</button></li>`).join("")}</ul>` : "") +
     `</li>`).join("");
 }
+function cardHtml(it, attrs) {
+  return `<button type="button" class="card" ${attrs}>
+        <h4>${esc(it.title)}</h4>
+        <span class="price">${it.price ? esc(it.price) : (it.body ? "" : "текст готується")}</span>
+        <span class="pic${it.photo ? "" : " empty"}"><img src="${it.photo || LION}" alt=""></span></button>`;
+}
 function renderContent() {
+  if (current < 0) {
+    document.getElementById("content").innerHTML = `<h2>Популярні пропозиції</h2><div class="sub"><div class="cards">` +
+      FEATURED.map(f => cardHtml(CATALOG[f[0]].subs[f[1]].items[f[2]], `data-feat="${f.join(",")}"`)).join("") + `</div></div>`;
+    return;
+  }
   const c = CATALOG[current];
   document.getElementById("content").innerHTML =
     `<h2>${esc(c.title)}</h2><p class="lang">Мови: ${esc(c.lang)}</p>` +
     (c.pending ? `<p class="empty-note">Тексти для цієї рубрики ще готуються — нижче приклад карток.</p>` : "") +
     c.subs.map((s, j) => `<div class="sub" id="sub-${j}">${c.subs.length > 1 ? `<h3>${esc(s.title)}</h3>` : ""}<div class="cards">` +
-      s.items.map((it, k) => `<button type="button" class="card" data-sub="${j}" data-item="${k}">
-        <h4>${esc(it.title)}</h4>
-        <span class="price">${it.price ? esc(it.price) : (it.body ? "" : "текст готується")}</span>
-        <span class="pic${it.photo ? "" : " empty"}"><img src="${it.photo || LION}" alt=""></span></button>`).join("") +
+      s.items.map((it, k) => cardHtml(it, `data-sub="${j}" data-item="${k}"`)).join("") +
       `</div></div>`).join("");
 }
 function render() { renderTabs(); renderCat(); renderContent(); }
@@ -1381,7 +1401,8 @@ document.addEventListener("click", e => {
   const b = e.target.closest("[data-cat],[data-go]");
   if (b && !b.classList.contains("card")) { e.preventDefault(); go(+(b.dataset.cat ?? b.dataset.go), b.dataset.sub != null ? +b.dataset.sub : null); return; }
   const card = e.target.closest(".card");
-  const o = e.target.closest("[data-open]");   /* посилання на конкретну екскурсію: "рубрика,підрубрика,картка" */
+  if (card && card.dataset.feat) { const [c, s, k] = card.dataset.feat.split(",").map(Number); openItem(CATALOG[c].subs[s].items[k]); return; }
+  const o =e.target.closest("[data-open]");   /* посилання на конкретну екскурсію: "рубрика,підрубрика,картка" */
   if (o) { e.preventDefault(); const [c, s, k] = o.dataset.open.split(",").map(Number); current = c; render(); openItem(CATALOG[c].subs[s].items[k]); return; }
   if (card) openItem(CATALOG[current].subs[+card.dataset.sub].items[+card.dataset.item]);
 });
