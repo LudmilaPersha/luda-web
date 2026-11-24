@@ -112,6 +112,17 @@
   .menu a:hover { color: var(--red); }
   .bar { padding-block: 18px 6px; }
 
+  /* ── МЕНЮ НА ТЕЛЕФОНІ: кнопка з трьома лініями (→ хрестик) + випадна панель ── */
+  .burger { display: none; appearance: none; width: 44px; height: 44px; padding: 0; border: 1px solid var(--line); border-radius: 8px; background: var(--paper-2); cursor: pointer; place-content: center; gap: 5px; }
+  .burger span { display: block; width: 22px; height: 2px; background: var(--red); border-radius: 2px; transition: transform .25s, opacity .25s; }
+  .burger[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .burger[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+  .burger[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  .drop { position: absolute; left: 0; right: 0; z-index: 20; background: var(--paper-2); border-block: 1px solid var(--line); box-shadow: 0 10px 24px rgb(59 43 29 / .25); padding: 6px max(16px, env(safe-area-inset-left, 0px)); }
+  .drop a { display: block; padding: 12px 0; text-decoration: none; font-size: 17px; border-bottom: 1px solid var(--line); }
+  .drop a:last-child { border-bottom: 0; }
+  .drop a:hover { color: var(--red); }
+
   /* ── ГОЛОВНА ЧАСТИНА: каталог зліва + картки ── */
   .main { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 36px; padding-block: 28px 64px; align-items: start; }
   aside h2, .content h2 { font-family: var(--head); font-weight: 400; color: var(--red); font-size: 28px; margin: 0 0 12px; line-height: 1.2; }
@@ -197,7 +208,9 @@
   /* ── ТЕЛЕФОН / ПЛАНШЕТ ── */
   @media (max-width: 980px) { .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } .main { grid-template-columns: 220px minmax(0, 1fr); gap: 24px; } }
   @media (max-width: 760px) {
-    .head { grid-template-columns: 1fr auto; gap: 12px; }
+    .head { grid-template-columns: 1fr auto auto; gap: 12px; }
+    .burger { display: grid; }
+    .bar .menu, .bar .orn + .menu + .orn { display: none; } /* меню — у кнопці; лишається один орнамент */
     .title { grid-column: 1 / -1; grid-row: 2; }
     .title nav { display: none; }
     .brand img { height: 88px; }
@@ -237,8 +250,12 @@
         <a class="vb" href="viber://chat?number=%2B420775423334" aria-label="Viber"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.6 3.8c.4-.1.8 0 1.1.3l2 2.4c.3.4.3.9 0 1.3l-1.1 1.2a10 10 0 0 0 6.4 6.4l1.2-1.1c.4-.3.9-.3 1.3 0l2.4 2c.3.3.4.7.3 1.1-.5 1.7-2 2.8-3.7 2.6C9.5 19.4 4.6 14.5 4 7.5 3.8 5.8 4.9 4.3 6.6 3.8z"/></svg></a>
       </div>
     </div>
+    <!-- Кнопка меню (три лінії) — видно тільки на телефоні -->
+    <button class="burger" id="burger" type="button" aria-label="Меню" aria-expanded="false" aria-controls="drop"><span></span><span></span><span></span></button>
   </div>
 </header>
+<!-- Випадне меню на телефоні: пункти копіюються з меню нижче (скрипт), тому міняти їх треба тільки там -->
+<nav class="drop" id="drop" aria-label="Меню" hidden></nav>
 
 <div class="wrap">
   <div class="tabs" id="tabs"></div>
@@ -1499,6 +1516,19 @@ document.getElementById("copy-email").addEventListener("click", e => {
   const select = () => { const r = document.createRange(); r.selectNodeContents(mail); const s = getSelection(); s.removeAllRanges(); s.addRange(r); };
   try { navigator.clipboard.writeText(mail.textContent).then(done, select); } catch (_) { select(); }
 });
+
+/* Меню на телефоні: копія пунктів меню; закривається після вибору, кліком поза меню або клавішею Esc */
+const burger = document.getElementById("burger"), drop = document.getElementById("drop");
+drop.innerHTML = document.querySelector(".bar .menu").innerHTML;
+function setDrop(open) {
+  if (open) drop.style.top = document.querySelector("header.top").offsetHeight + "px";
+  drop.hidden = !open;
+  burger.setAttribute("aria-expanded", open);
+}
+burger.addEventListener("click", e => { e.stopPropagation(); setDrop(drop.hidden); });
+document.addEventListener("click", e => { if (!drop.hidden && (!drop.contains(e.target) || e.target.closest("a"))) setDrop(false); });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !drop.hidden) { setDrop(false); burger.focus(); } });
+matchMedia("(max-width: 760px)").addEventListener("change", e => { if (!e.matches) setDrop(false); });
 
 if (matchMedia("(max-width: 760px)").matches) document.getElementById("catalog").open = false;
 render();
