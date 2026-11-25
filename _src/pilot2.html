@@ -1,0 +1,437 @@
+<title>Перший магазин вражень — пілот 2</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400&family=PT+Serif:ital,wght@0,400;0,700;1,400&display=swap">
+<style>
+  /* ПІЛОТ 2 — вигляд старого сайту Людмили (кремовий папір, червоний лев, червоні заголовки,
+     коричневі картки, каталог зліва), але чисто і сучасно. Одна тема (світла) — свідомо. */
+  :root {
+    --paper: #f7eed6;     /* кремовий фон */
+    --paper-2: #efe2c0;   /* трохи темніший — каталог, заглушки фото */
+    --red: #b3262a;       /* червоний: лев, заголовки, орнамент */
+    --brown: #8b5a33;     /* коричневі картки */
+    --brown-2: #74482a;   /* картка при наведенні */
+    --cream: #fff7e6;     /* текст на картках */
+    --ink: #3b2b1d;       /* основний текст */
+    --muted: #7b6650;     /* другорядний текст */
+    --line: #dcc79c;      /* тонкі лінії */
+    --sky: #e6d7ae;       /* контури Праги над підвалом і сам підвал */
+    --head: "PT Serif", Georgia, "Times New Roman", serif;
+    --font: "PT Sans", "Segoe UI", Arial, sans-serif;
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 17px/1.6 var(--font); }
+  .wrap { max-width: 1200px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
+
+  /* ── ШАПКА: лев зліва · назва по центру · контакти справа ── */
+  header.top { position: relative; overflow: hidden; background: var(--paper); }
+  .head { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 24px; padding-block: 22px; position: relative; z-index: 1; }
+  .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--red); }
+  .brand img { height: 120px; width: auto; display: block; } /* круглий логотип (варіант B), назва вже в ньому */
+  .brand span { font-family: var(--head); font-weight: 700; line-height: 1.1; font-size: 15px; letter-spacing: .04em; text-transform: uppercase; }
+  .brand small { display: block; font-weight: 400; font-style: italic; text-transform: none; letter-spacing: 0; font-size: 14px; margin-top: 3px; }
+  .title { text-align: center; }
+  .title h1 { margin: 0; font-family: var(--head); font-weight: 700; color: var(--red); font-size: clamp(20px, 2.4vw, 30px); letter-spacing: .03em; text-transform: uppercase; text-wrap: balance; }
+  .title nav { display: flex; justify-content: center; gap: 20px; margin-top: 6px; font-size: 15px; }
+  .title nav a { text-decoration: none; color: var(--ink); }
+  .title nav a:hover { color: var(--red); }
+  .contact { display: grid; gap: 4px; justify-items: end; font-size: 15px; }
+  .contact a { text-decoration: none; }
+  .contact .phone { font-weight: 700; font-variant-numeric: tabular-nums; }
+  .msgr { display: flex; gap: 6px; margin-top: 4px; }
+  .msgr a { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; color: #fff; }
+  .msgr svg { width: 17px; height: 17px; }
+  .msgr .wa { background: #25a244; } .msgr .tg { background: #2a9ed8; } .msgr .vb { background: #7360f2; }
+
+  /* ── РУБРИКИ-ВКЛАДКИ з фото (як на старому сайті) ── */
+  .tabs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; padding-block: 28px 8px; }
+  .tab { appearance: none; border: 0; padding: 0; background: none; cursor: pointer; text-align: left; font: inherit; color: var(--ink); }
+  .tab b { display: block; font-family: var(--head); font-weight: 700; font-size: 16px; text-align: center; background: var(--paper-2); border: 1px solid var(--line); border-bottom: 0; border-radius: 10px 10px 0 0; padding: 6px 8px; margin: 0 10px; }
+  .tab .ph { display: block; aspect-ratio: 16 / 10; border-radius: 10px; overflow: hidden; box-shadow: 0 6px 18px rgb(59 43 29 / .22); border: 1px solid var(--line); }
+  .tab img { width: 100%; height: 100%; object-fit: cover; display: block; filter: sepia(.75) saturate(.8); transition: filter .35s, transform .35s; } /* сепія, як на старому сайті; активна вкладка — у кольорі */
+  .tab:hover img, .tab[aria-pressed="true"] img { filter: none; transform: scale(1.03); }
+  .tab[aria-pressed="true"] b { color: var(--red); }
+
+  /* ── ЧЕРВОНИЙ ОРНАМЕНТ + меню між ним ── */
+  .orn { display: flex; align-items: center; gap: 4px; color: #d0463c; } /* лінії й орнамент — як на старому сайті */
+  .orn::before, .orn::after { content: ""; flex: 1; height: 5px; background: currentColor; }
+  .orn::before { clip-path: polygon(0 50%, 100% 0, 100% 100%); } /* лінія тоншає до країв */
+  .orn::after { clip-path: polygon(0 0, 100% 50%, 0 100%); }
+  .orn svg { width: 160px; height: 40px; flex: none; }
+  .orn .lf { fill: currentColor; stroke: none; }
+
+  .menu { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 34px; padding-block: 10px; font-size: 16px; }
+  .menu a { text-decoration: none; }
+  .menu a:hover { color: var(--red); }
+  .bar { padding-block: 18px 6px; }
+
+  /* ── МЕНЮ НА ТЕЛЕФОНІ: кнопка з трьома лініями (→ хрестик) + випадна панель ── */
+  .burger { display: none; appearance: none; width: 44px; height: 44px; padding: 0; border: 1px solid var(--line); border-radius: 8px; background: var(--paper-2); cursor: pointer; place-content: center; gap: 5px; }
+  .burger span { display: block; width: 22px; height: 2px; background: var(--red); border-radius: 2px; transition: transform .25s, opacity .25s; }
+  .burger[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .burger[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+  .burger[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  .drop { position: absolute; left: 0; right: 0; z-index: 20; background: var(--paper-2); border-block: 1px solid var(--line); box-shadow: 0 10px 24px rgb(59 43 29 / .25); padding: 6px max(16px, env(safe-area-inset-left, 0px)); }
+  .drop a { display: block; padding: 12px 0; text-decoration: none; font-size: 17px; border-bottom: 1px solid var(--line); }
+  .drop a:last-child { border-bottom: 0; }
+  .drop a:hover { color: var(--red); }
+
+  /* ── ГОЛОВНА ЧАСТИНА: каталог зліва + картки ── */
+  .main { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 36px; padding-block: 28px 64px; align-items: start; }
+  aside h2, .content h2 { font-family: var(--head); font-weight: 400; color: var(--red); font-size: 28px; margin: 0 0 12px; line-height: 1.2; }
+  .cat { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; font-size: 17px; }
+  .cat button { appearance: none; border: 0; background: none; font: inherit; color: var(--ink); cursor: pointer; text-align: left; padding: 5px 0; width: 100%; }
+  .cat > li > button { font-weight: 700; }
+  .cat button:hover, .cat button.on { color: var(--red); }
+  .cat ul { list-style: none; margin: 0 0 6px; padding: 0 0 0 14px; border-left: 1px solid var(--line); }
+  .cat ul button { padding: 3px 0; }
+  aside details > summary { list-style: none; }
+  aside details > summary::-webkit-details-marker { display: none; }
+  aside .note { margin-top: 22px; font-size: 14px; color: var(--muted); }
+
+  .content { min-width: 0; }
+  .lang { color: var(--muted); font-size: 14px; font-style: italic; margin: -6px 0 18px; }
+  .sub { margin-bottom: 40px; scroll-margin-top: 16px; }
+  .sub h3 { font-family: var(--head); font-weight: 700; font-size: 21px; margin: 0 0 14px; display: flex; align-items: center; gap: 12px; }
+  .sub h3::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+  .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+  .card { appearance: none; border: 0; font: inherit; text-align: left; cursor: pointer; background: var(--brown); color: var(--cream); border-radius: 10px; padding: 14px 14px 16px; display: grid; grid-template-rows: auto 1fr auto; gap: 8px; box-shadow: 0 6px 16px rgb(59 43 29 / .25); transition: background .2s, transform .2s; }
+  .card:hover { background: var(--brown-2); transform: translateY(-2px); }
+  .card h4 { margin: 0; font-family: var(--head); font-weight: 400; font-size: 19px; line-height: 1.25; text-wrap: balance; }
+  .card .price { font-size: 14px; opacity: .85; align-self: end; }
+  .card .pic { aspect-ratio: 4 / 3; border-radius: 6px; overflow: hidden; background: var(--paper-2); display: grid; place-items: center; }
+  .card .pic img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .card .pic.empty img { width: 46%; height: auto; opacity: .3; object-fit: contain; } /* заглушка: фото ще немає */
+  .empty-note { color: var(--muted); font-style: italic; margin: 0 0 16px; }
+
+  /* ── ВІКНО з повним текстом програми ── */
+  dialog { border: 0; border-radius: 12px; padding: 0; width: min(760px, calc(100% - 32px)); max-height: calc(100% - 48px); background: var(--paper); color: var(--ink); box-shadow: 0 20px 60px rgb(0 0 0 / .35); }
+  dialog::backdrop { background: rgb(40 25 15 / .55); }
+  .dlg { padding: 28px 30px 30px; }
+  .dlg h2 { font-family: var(--head); color: var(--red); font-weight: 700; font-size: 26px; margin: 0 40px 14px 0; line-height: 1.2; }
+  .dlg img.hero { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 8px; margin-bottom: 16px; display: block; }
+  .dlg p { margin: 0 0 12px; }
+  .dlg ul { margin: 0 0 12px; padding-left: 22px; }
+  .dlg .pr { background: var(--paper-2); border-left: 3px solid var(--red); padding: 10px 14px; border-radius: 0 6px 6px 0; margin: 0 0 14px; font-variant-numeric: tabular-nums; }
+  .dlg .pr p, .dlg .pr ul { margin: 0; }
+  .dlg .todo { color: var(--muted); font-style: italic; }
+  /* Фото на весь екран: натиснути на фото у вікні програми; закрити — будь-де або Esc */
+  .dlg img.hero { cursor: zoom-in; }
+  dialog.zoom { width: 100%; max-width: 100%; height: 100%; max-height: 100%; background: transparent; box-shadow: none; border-radius: 0; cursor: zoom-out; }
+  dialog.zoom::backdrop { background: rgb(20 12 6 / .9); }
+  dialog.zoom[open] { display: grid; place-items: center; }
+  dialog.zoom img { max-width: calc(100vw - 24px); max-height: calc(100vh - 24px); object-fit: contain; border-radius: 6px; display: block; }
+  dialog.zoom .close { position: fixed; }
+  .close { position: absolute; top: 14px; right: 14px; width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--line); background: var(--paper-2); font-size: 22px; line-height: 1; cursor: pointer; color: var(--ink); }
+  .dlg .ask { display: inline-block; margin-top: 8px; background: var(--red); color: #fff; text-decoration: none; padding: 10px 20px; border-radius: 6px; font-weight: 700; }
+
+  /* ── ПРО НАС: фото зліва, текст Людмили справа ── */
+  .about { display: grid; grid-template-columns: minmax(0, 520px) minmax(0, 1fr); gap: clamp(28px, 5vw, 60px); align-items: start; padding-block: 8px 64px; scroll-margin-top: 16px; }
+  .about img { width: 100%; height: auto; display: block; border-radius: 10px; border: 1px solid var(--line); box-shadow: 0 6px 18px rgb(59 43 29 / .22); }
+  .about .text { max-width: 60ch; }
+  .about h2 { font-family: var(--head); font-weight: 700; color: var(--red); font-size: clamp(24px, 2.6vw, 32px); line-height: 1.2; margin: 0 0 6px; text-wrap: balance; }
+  .about .kicker { font-family: var(--head); font-style: italic; color: var(--muted); margin: 0 0 18px; }
+  .about p { margin: 0 0 14px; }
+  @media (max-width: 760px) { .about { grid-template-columns: 1fr; } }
+
+  /* ── КОНТАКТИ: телефон і e-mail зліва, месенджери та соцмережі справа ── */
+  .contacts { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px clamp(28px, 5vw, 60px); background: var(--paper-2); border: 1px solid var(--line); border-radius: 12px; padding: clamp(22px, 4vw, 40px); margin-bottom: 56px; scroll-margin-top: 16px; }
+  .contacts h2 { font-family: var(--head); font-weight: 700; color: var(--red); font-size: clamp(22px, 2.4vw, 30px); line-height: 1.2; margin: 0 0 14px; text-wrap: balance; }
+  .contacts .big { display: inline-block; font-size: clamp(24px, 3vw, 30px); font-weight: 700; text-decoration: none; font-variant-numeric: tabular-nums; }
+  .contacts .hint { color: var(--muted); margin: 6px 0 16px; }
+  .contacts .call { display: inline-block; background: var(--red); color: #fff; text-decoration: none; padding: 10px 22px; border-radius: 6px; font-weight: 700; }
+  .contacts .email { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 18px; }
+  .contacts .email a { text-decoration: none; }
+  .contacts .copy { appearance: none; border: 1px solid var(--line); background: var(--paper); color: var(--ink); border-radius: 6px; padding: 4px 10px; font: inherit; font-size: 13px; cursor: pointer; }
+  .contacts ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+  .contacts .lists { display: grid; gap: 22px; align-content: start; }
+  .contacts .lists h3 { font-family: var(--head); font-weight: 700; font-size: 17px; margin: 0 0 10px; }
+  .contacts ul a { display: flex; align-items: center; gap: 12px; text-decoration: none; min-width: 0; overflow-wrap: anywhere; }
+  .contacts ul a:hover span { color: var(--red); }
+  .contacts .ico { flex: none; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; color: #fff; }
+  .contacts .ico svg { width: 20px; height: 20px; }
+  .ico.wa { background: #25a244; } .ico.tg { background: #2a9ed8; } .ico.vb { background: #7360f2; }
+  .ico.fb { background: #1877f2; } .ico.ig { background: #d6336c; } .ico.tt { background: #111; }
+  @media (max-width: 760px) { .contacts { grid-template-columns: 1fr; } }
+
+  /* ── ПІДВАЛ: дані підприємця (за чеським законом: ім'я, IČO, адреса) ── */
+  footer .legal { display: grid; gap: 3px; }
+  footer .legal .me { color: var(--ink); }
+  footer .legal .small { font-size: 13px; }
+
+  /* Контури Праги між основною частиною і підвалом: місто «стоїть» на підвалі того самого кольору.
+     Град, св. Віт, св. Миколай, Карлів міст, Тин, Вишеград — як на старому сайті, але не під текстом. */
+  .sky { display: block; width: 100%; height: clamp(60px, 8vw, 120px); fill: var(--sky); }
+  .sky .gap { fill: var(--paper); } /* арки моста */
+  footer { background: var(--sky); margin-top: -1px; padding-block: 5px 20px; font-size: 14px; color: var(--muted); }
+
+  /* ── ТЕЛЕФОН / ПЛАНШЕТ ── */
+  @media (max-width: 980px) { .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } .main { grid-template-columns: 220px minmax(0, 1fr); gap: 24px; } }
+  @media (max-width: 760px) {
+    .head { grid-template-columns: 1fr auto auto; gap: 12px; }
+    .burger { display: grid; }
+    .bar .menu, .bar .orn + .menu + .orn { display: none; } /* меню — у кнопці; лишається один орнамент */
+    .title { grid-column: 1 / -1; grid-row: 2; }
+    .title nav { display: none; }
+    .brand img { height: 88px; }
+    .contact { font-size: 14px; }
+    .tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; padding-top: 18px; }
+    .tab b { font-size: 14px; margin: 0 6px; }
+    .menu { gap: 4px 20px; font-size: 15px; }
+    .main { grid-template-columns: 1fr; }
+    aside { background: var(--paper-2); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+    aside details > summary { list-style: none; cursor: pointer; }
+    aside details > summary::-webkit-details-marker { display: none; }
+    aside details > summary h2 { margin: 0; font-size: 22px; display: flex; justify-content: space-between; }
+    aside details > summary h2::after { content: "▾"; font-size: 18px; }
+    aside details[open] > summary h2::after { content: "▴"; }
+    aside details[open] > summary { margin-bottom: 10px; }
+    .dlg { padding: 22px 18px 24px; }
+  }
+  @media (max-width: 480px) { .cards { grid-template-columns: 1fr; } .contact .mail { display: none; } }
+  @media (prefers-reduced-motion: reduce) { .tab img, .card { transition: none; } }
+</style>
+
+<header class="top">
+  <div class="wrap head">
+    <a class="brand" href="#">
+      <img src="images/logo-b.png" alt="Перший магазин вражень в Чехії" width="296" height="280">
+    </a>
+    <div class="title">
+      <h1>{{h1}}</h1>
+      <nav aria-label="Рубрики"><a href="#" data-go="0">Екскурсії</a><a href="#" data-go="2">Дозвілля</a><a href="#" data-go="3">Додаткові послуги</a></nav>
+    </div>
+    <div class="contact">
+      <a class="mail" href="mailto:czvpodarok@seznam.cz">czvpodarok@seznam.cz</a>
+      <a class="phone" href="tel:+420775423334">+420 775 423 334</a>
+      <div class="msgr">
+        <a class="wa" href="https://wa.me/420775423334" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3a9 9 0 0 0-7.8 13.5L3 21l4.6-1.2A9 9 0 1 0 12 3zm4.6 12.6c-.2.6-1.1 1.1-1.6 1.2-.4 0-.9.1-2.9-.7-2.4-1-4-3.4-4.1-3.6-.1-.2-1-1.3-1-2.5s.6-1.8.9-2c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.1.1.3 0 .5l-.4.6-.3.3c-.1.1-.3.3-.1.5.1.3.6 1 1.3 1.6.9.8 1.6 1 1.9 1.1.2.1.4.1.5-.1l.7-.9c.2-.2.3-.2.5-.1l1.8.9c.3.1.4.2.5.3.1.2.1.7-.1 1.3z"/></svg></a>
+        <a class="tg" href="https://t.me/+420775423334" target="_blank" rel="noopener" aria-label="Telegram"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.7 4.3 2.9 11.2c-.8.3-.8 1.2 0 1.5l4.4 1.4 1.7 5.3c.2.6.9.8 1.4.4l2.5-2.1 4.6 3.4c.6.4 1.4.1 1.5-.6l3-14.3c.2-.8-.6-1.4-1.3-1.1zM9.6 14l-.4 3.4-1.2-3.8 9.3-6.1z"/></svg></a>
+        <a class="vb" href="viber://chat?number=%2B420775423334" aria-label="Viber"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.6 3.8c.4-.1.8 0 1.1.3l2 2.4c.3.4.3.9 0 1.3l-1.1 1.2a10 10 0 0 0 6.4 6.4l1.2-1.1c.4-.3.9-.3 1.3 0l2.4 2c.3.3.4.7.3 1.1-.5 1.7-2 2.8-3.7 2.6C9.5 19.4 4.6 14.5 4 7.5 3.8 5.8 4.9 4.3 6.6 3.8z"/></svg></a>
+      </div>
+    </div>
+    <!-- Кнопка меню (три лінії) — видно тільки на телефоні -->
+    <button class="burger" id="burger" type="button" aria-label="Меню" aria-expanded="false" aria-controls="drop"><span></span><span></span><span></span></button>
+  </div>
+</header>
+<!-- Випадне меню на телефоні: пункти копіюються з меню нижче (скрипт), тому міняти їх треба тільки там -->
+<nav class="drop" id="drop" aria-label="Меню" hidden></nav>
+
+<div class="wrap">
+  <div class="tabs" id="tabs"></div>
+  <div class="bar">
+    <div class="orn" aria-hidden="true"><svg viewBox="0 0 160 40" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round"><g><path d="M80 23C77 12 65 8 59 13c-5 5-1 13 5 11 4-1 3-7-1-6"/><path d="M59 18c-8 8-20 10-26 4-4-4 0-9 4-7 3 2 1 6-2 5"/><path d="M33 22c-6 2-13 0-19-2"/><path class="lf" d="M51 12c-4-6-11-7-15-4 5 1 10 3 15 4z"/><path class="lf" d="M47 25c-2 5-7 7-11 6 3-3 7-5 11-6z"/></g><g transform="matrix(-1 0 0 1 160 0)"><path d="M80 23C77 12 65 8 59 13c-5 5-1 13 5 11 4-1 3-7-1-6"/><path d="M59 18c-8 8-20 10-26 4-4-4 0-9 4-7 3 2 1 6-2 5"/><path d="M33 22c-6 2-13 0-19-2"/><path class="lf" d="M51 12c-4-6-11-7-15-4 5 1 10 3 15 4z"/><path class="lf" d="M47 25c-2 5-7 7-11 6 3-3 7-5 11-6z"/></g><path class="lf" d="M80 16l4 6-4 6-4-6z"/></svg></div>
+    <nav class="menu" aria-label="Меню"><a href="#" data-go="-1">Головна</a><a href="#about">Про нас</a><a href="#">Інформація про Чехію</a><a href="#">Відгуки туристів</a><a href="#contacts">Контакти</a></nav>
+    <div class="orn" aria-hidden="true"><svg viewBox="0 0 160 40" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round"><g><path d="M80 23C77 12 65 8 59 13c-5 5-1 13 5 11 4-1 3-7-1-6"/><path d="M59 18c-8 8-20 10-26 4-4-4 0-9 4-7 3 2 1 6-2 5"/><path d="M33 22c-6 2-13 0-19-2"/><path class="lf" d="M51 12c-4-6-11-7-15-4 5 1 10 3 15 4z"/><path class="lf" d="M47 25c-2 5-7 7-11 6 3-3 7-5 11-6z"/></g><g transform="matrix(-1 0 0 1 160 0)"><path d="M80 23C77 12 65 8 59 13c-5 5-1 13 5 11 4-1 3-7-1-6"/><path d="M59 18c-8 8-20 10-26 4-4-4 0-9 4-7 3 2 1 6-2 5"/><path d="M33 22c-6 2-13 0-19-2"/><path class="lf" d="M51 12c-4-6-11-7-15-4 5 1 10 3 15 4z"/><path class="lf" d="M47 25c-2 5-7 7-11 6 3-3 7-5 11-6z"/></g><path class="lf" d="M80 16l4 6-4 6-4-6z"/></svg></div>
+  </div>
+</div>
+
+<div class="wrap main">
+  <aside>
+    <details id="catalog" open>
+      <summary><h2>Наш каталог</h2></summary>
+      <ul class="cat" id="cat"></ul>
+    </details>
+  </aside>
+  <section class="content" id="content" aria-live="polite"></section>
+</div>
+
+<!-- ПРО НАС — текст Людмили без змін (той самий, що на першому сайті) -->
+<section class="wrap about" id="about">
+  <img src="images/about.jpg" alt="Людмила та Іванка, гіди по Празі" width="1000" height="667" loading="lazy">
+  <div class="text">
+    <h2>{{about_title}}</h2>
+    <p class="kicker">{{about_kicker}}</p>
+    {{about_body}}
+  </div>
+</section>
+
+<!-- КОНТАКТИ — ті самі дані, що на першому сайті. Номер міняти в усіх href і в тексті -->
+<div class="wrap">
+  <section class="contacts" id="contacts">
+    <div>
+      <h2>{{contacts_title}}</h2>
+      <a class="big" href="tel:+420775423334">+420 775 423 334</a>
+      <p class="hint">{{contacts_hint}}</p>
+      <a class="call" href="tel:+420775423334">Подзвонити</a>
+      <div class="email">
+        <a href="mailto:czvpodarok@seznam.cz">czvpodarok@seznam.cz</a>
+        <button type="button" class="copy" id="copy-email">Скопіювати e-mail</button>
+      </div>
+    </div>
+    <div class="lists">
+      <div>
+        <h3>Месенджери</h3>
+        <ul>
+          <li><a href="https://wa.me/420775423334" target="_blank" rel="noopener"><i class="ico wa"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3a9 9 0 0 0-7.8 13.5L3 21l4.6-1.2A9 9 0 1 0 12 3zm4.6 12.6c-.2.6-1.1 1.1-1.6 1.2-.4 0-.9.1-2.9-.7-2.4-1-4-3.4-4.1-3.6-.1-.2-1-1.3-1-2.5s.6-1.8.9-2c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.1.1.3 0 .5l-.4.6-.3.3c-.1.1-.3.3-.1.5.1.3.6 1 1.3 1.6.9.8 1.6 1 1.9 1.1.2.1.4.1.5-.1l.7-.9c.2-.2.3-.2.5-.1l1.8.9c.3.1.4.2.5.3.1.2.1.7-.1 1.3z"/></svg></i><span>WhatsApp</span></a></li>
+          <li><a href="https://t.me/+420775423334" target="_blank" rel="noopener"><i class="ico tg"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.7 4.3 2.9 11.2c-.8.3-.8 1.2 0 1.5l4.4 1.4 1.7 5.3c.2.6.9.8 1.4.4l2.5-2.1 4.6 3.4c.6.4 1.4.1 1.5-.6l3-14.3c.2-.8-.6-1.4-1.3-1.1zM9.6 14l-.4 3.4-1.2-3.8 9.3-6.1z"/></svg></i><span>Telegram</span></a></li>
+          <li><a href="viber://chat?number=%2B420775423334"><i class="ico vb"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.6 3.8c.4-.1.8 0 1.1.3l2 2.4c.3.4.3.9 0 1.3l-1.1 1.2a10 10 0 0 0 6.4 6.4l1.2-1.1c.4-.3.9-.3 1.3 0l2.4 2c.3.3.4.7.3 1.1-.5 1.7-2 2.8-3.7 2.6C9.5 19.4 4.6 14.5 4 7.5 3.8 5.8 4.9 4.3 6.6 3.8z"/></svg></i><span>Viber</span></a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Соцмережі</h3>
+        <ul>
+          <li><a href="https://www.facebook.com/share/1CnAf3CfpN/" target="_blank" rel="noopener"><i class="ico fb"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.5 21v-7.5H16l.4-3H13.5V8.6c0-.9.3-1.5 1.5-1.5h1.6V4.4c-.3 0-1.2-.1-2.3-.1-2.3 0-3.8 1.4-3.8 3.9v2.3H8v3h2.5V21z"/></svg></i><span>Facebook</span></a></li>
+          <li><a href="https://www.instagram.com/prague_guide_lyudmyla" target="_blank" rel="noopener"><i class="ico ig"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="5"/><circle cx="12" cy="12" r="3.6"/><circle cx="17" cy="7" r=".8" fill="currentColor"/></svg></i><span>@prague_guide_lyudmyla</span></a></li>
+          <li><a href="https://www.tiktok.com/@ludmila_praha_gid" target="_blank" rel="noopener"><i class="ico tt"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 3h3c.2 1.8 1.4 3.2 3 3.5v3c-1.1 0-2.1-.3-3-.8V15a6 6 0 1 1-6-6v3.1a2.9 2.9 0 1 0 3 2.9z"/></svg></i><span>@ludmila_praha_gid</span></a></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</div>
+
+<svg class="sky" id="sky" viewBox="0 40 1600 112" preserveAspectRatio="xMidYMax slice" aria-hidden="true"></svg>
+<footer>
+  <div class="wrap legal">
+    <div class="me">Ludmila Ščerbinina (Людмила Щербинина) · IČO 01073532</div>
+    <div>Sadová 339, Minice, 278 01 Kralupy nad Vltavou</div>
+    <div class="small">Fyzická osoba podnikající dle živnostenského zákona, zapsaná v živnostenském rejstříku. · © Перший магазин вражень в Чехії, 2011–2026</div>
+  </div>
+</footer>
+
+<dialog id="dlg"><button class="close" id="dlg-close" aria-label="Закрити">×</button><div class="dlg" id="dlg-body"></div></dialog>
+<dialog class="zoom" id="zoom" aria-label="Фото"><button class="close" aria-label="Закрити">×</button><img id="zoom-img" alt=""></dialog>
+
+<script>
+/* КАТАЛОГ — збирається з папки content/catalog/ (тексти Людмили, дослівно). Тут не міняти:
+   правити файли в content/ і запустити _src/build.py (див. content/README.md). */
+const CATALOG = /*CATALOG*/;
+
+const LION = "images/logo-mark-red.png";
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+let current = -1; /* -1 = «Головна»: обрані пропозиції */
+
+/* «Головна» — пропозиції з content/holovna.md, у її порядку (шукаємо за назвою картки) */
+const FEATURED = /*FEATURED*/.map(t => {
+  for (const [c, cat] of CATALOG.entries()) for (const [s, sub] of cat.subs.entries()) {
+    const k = sub.items.findIndex(it => it.title === t);
+    if (k >= 0) return [c, s, k];
+  }
+}).filter(Boolean);
+
+function renderTabs() {
+  document.getElementById("tabs").innerHTML = CATALOG.map((c, i) =>
+    `<button type="button" class="tab" data-cat="${i}" aria-pressed="${i === current}"><b>${esc(c.title)}</b><span class="ph"><img src="${c.photo}" alt=""></span></button>`).join("");
+}
+function renderCat() {
+  document.getElementById("cat").innerHTML = CATALOG.map((c, i) =>
+    `<li><button type="button" data-cat="${i}" class="${i === current ? "on" : ""}">${esc(c.title)}</button>` +
+    (c.subs.length > 1 ? `<ul>${c.subs.map((s, j) => `<li><button type="button" data-cat="${i}" data-sub="${j}">${esc(s.title)}</button></li>`).join("")}</ul>` : "") +
+    `</li>`).join("");
+}
+function cardHtml(it, attrs) {
+  return `<button type="button" class="card" ${attrs}>
+        <h4>${esc(it.title)}</h4>
+        <span class="price">${it.price ? esc(it.price) : (it.body ? "" : "текст готується")}</span>
+        <span class="pic${it.photo ? "" : " empty"}"><img src="${it.photo || LION}" alt=""></span></button>`;
+}
+function renderContent() {
+  if (current < 0) {
+    document.getElementById("content").innerHTML = `<h2>Популярні пропозиції</h2><div class="sub"><div class="cards">` +
+      FEATURED.map(f => cardHtml(CATALOG[f[0]].subs[f[1]].items[f[2]], `data-feat="${f.join(",")}"`)).join("") + `</div></div>`;
+    return;
+  }
+  const c = CATALOG[current];
+  document.getElementById("content").innerHTML =
+    `<h2>${esc(c.title)}</h2><p class="lang">Мови: ${esc(c.lang)}</p>` +
+    (c.pending ? `<p class="empty-note">Тексти для цієї рубрики ще готуються — нижче приклад карток.</p>` : "") +
+    c.subs.map((s, j) => `<div class="sub" id="sub-${j}">${c.subs.length > 1 ? `<h3>${esc(s.title)}</h3>` : ""}<div class="cards">` +
+      s.items.map((it, k) => cardHtml(it, `data-sub="${j}" data-item="${k}"`)).join("") +
+      `</div></div>`).join("");
+}
+function render() { renderTabs(); renderCat(); renderContent(); }
+
+function go(i, sub) {
+  if (dlg.open) dlg.close(); current = i; render();
+  const t = sub != null ? document.getElementById("sub-" + sub) : document.getElementById("content");
+  t.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+  if (matchMedia("(max-width: 760px)").matches) document.getElementById("catalog").open = false;
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-cat],[data-go]");
+  if (b && !b.classList.contains("card")) { e.preventDefault(); go(+(b.dataset.cat ?? b.dataset.go), b.dataset.sub != null ? +b.dataset.sub : null); return; }
+  const card = e.target.closest(".card");
+  if (card && card.dataset.feat) { const [c, s, k] = card.dataset.feat.split(",").map(Number); openItem(CATALOG[c].subs[s].items[k]); return; }
+  const o =e.target.closest("[data-open]");   /* посилання на конкретну екскурсію: "рубрика,підрубрика,картка" */
+  if (o) { e.preventDefault(); const [c, s, k] = o.dataset.open.split(",").map(Number); current = c; render(); openItem(CATALOG[c].subs[s].items[k]); return; }
+  if (card) openItem(CATALOG[current].subs[+card.dataset.sub].items[+card.dataset.item]);
+});
+
+const dlg = document.getElementById("dlg");
+function openItem(it) {
+  document.getElementById("dlg-body").innerHTML = `<h2>${esc(it.title)}</h2>` +
+    (it.photo ? `<img class="hero" src="${it.photo}" alt="">` : "") +
+    (it.body || `<p class="todo">Текст готується.</p>`) +
+    `<a class="ask" href="tel:+420775423334">Замовити: +420 775 423 334</a>`;
+  if (!dlg.open) dlg.showModal(); dlg.scrollTop = 0;
+}
+document.getElementById("dlg-close").onclick = () => dlg.close();
+dlg.addEventListener("click", e => {
+  if (e.target === dlg) dlg.close();
+  if (e.target.matches("img.hero")) { document.getElementById("zoom-img").src = e.target.src; zoom.showModal(); } /* фото на весь екран */
+});
+const zoom = document.getElementById("zoom");
+zoom.addEventListener("click", () => zoom.close());
+
+/* Контури Праги (зліва направо): Петршин, Град із собором св. Віта, Мала Страна зі св. Миколаєм,
+   Карлів міст із вежами, Старе Місто з ратушею і Тинським храмом, Вишеград. Земля — y=150. */
+function skyline() {
+  const G = 150, P = [];
+  const poly = pts => P.push(`<polygon points="${pts.map(p => p.join(",")).join(" ")}"/>`);
+  const rect = (x, w, h) => poly([[x, G], [x, G - h], [x + w, G - h], [x + w, G]]);
+  const house = (x, w, h, r = w * .5) => poly([[x, G], [x, G - h], [x + w / 2, G - h - r], [x + w, G - h], [x + w, G]]);
+  const tower = (x, w, h, s, pin = 0) => {
+    poly([[x, G], [x, G - h], [x + w / 2, G - h - s], [x + w, G - h], [x + w, G]]);
+    if (pin) { poly([[x - 2, G - h + 2], [x, G - h - pin], [x + 3, G - h + 2]]); poly([[x + w - 3, G - h + 2], [x + w, G - h - pin], [x + w + 2, G - h + 2]]); }
+  };
+  const dome = (x, w, h, lant) => { rect(x, w, h); P.push(`<path d="M${x} ${G - h}A${w / 2} ${w * .6} 0 0 1 ${x + w} ${G - h}Z"/>`); rect(x + w / 2 - 2, 4, h + w * .6 + lant); };
+  for (let x = 0; x < 1600;) {            /* дахи будинків */
+    const w = 22 + (x * 7) % 13, h = 24 + (x * 13) % 19;
+    if (x < 650 || x > 990) house(x, w, h);
+    x += w - 2;
+  }
+  poly([[0, G], [0, G - 22], [90, G - 26], [190, G - 34], [480, G - 36], [560, G - 18], [610, G - 4], [610, G]]); /* пагорб Граду */
+  tower(40, 8, 88, 10);                                                   /* Петршинська вежа */
+  rect(180, 300, 52); house(176, 30, 52, 10); house(470, 26, 50, 10);     /* палаци Граду */
+  house(300, 72, 64, 16); tower(300, 12, 80, 24, 5); tower(316, 12, 80, 24, 5); dome(372, 22, 86, 10); /* св. Віт */
+  tower(430, 8, 66, 12); tower(442, 8, 66, 12);                          /* св. Юрій */
+  dome(540, 36, 56, 12); tower(584, 12, 70, 18);                          /* св. Миколай */
+  tower(612, 22, 58, 22); tower(638, 16, 46, 16);                         /* малостранські мостові вежі */
+  rect(660, 322, 20);                                                     /* Карлів міст */
+  for (let i = 0; i < 8; i++) P.push(`<ellipse class="gap" cx="${680 + i * 40}" cy="${G}" rx="15" ry="13"/>`);
+  tower(980, 26, 64, 26, 6);                                              /* Староміська мостова вежа */
+  tower(1090, 16, 74, 14, 4);                                             /* ратуша */
+  house(1170, 42, 50, 14); tower(1170, 16, 72, 32, 6); tower(1196, 16, 72, 32, 6); /* Тинський храм */
+  dome(1300, 32, 46, 10);
+  poly([[1420, G], [1440, G - 14], [1560, G - 16], [1600, G - 8], [1600, G]]);    /* Вишеград */
+  tower(1480, 9, 74, 26); tower(1493, 9, 74, 26);
+  document.getElementById("sky").innerHTML = P.join("");
+}
+skyline();
+
+/* Кнопка «Скопіювати e-mail» → «Скопійовано ✓»; якщо буфер недоступний — виділяємо адресу */
+document.getElementById("copy-email").addEventListener("click", e => {
+  const btn = e.currentTarget, mail = btn.previousElementSibling;
+  const done = () => { btn.textContent = "Скопійовано ✓"; setTimeout(() => btn.textContent = "Скопіювати e-mail", 2000); };
+  const select = () => { const r = document.createRange(); r.selectNodeContents(mail); const s = getSelection(); s.removeAllRanges(); s.addRange(r); };
+  try { navigator.clipboard.writeText(mail.textContent).then(done, select); } catch (_) { select(); }
+});
+
+/* Меню на телефоні: копія пунктів меню; закривається після вибору, кліком поза меню або клавішею Esc */
+const burger = document.getElementById("burger"), drop = document.getElementById("drop");
+drop.innerHTML = document.querySelector(".bar .menu").innerHTML;
+function setDrop(open) {
+  if (open) drop.style.top = document.querySelector("header.top").offsetHeight + "px";
+  drop.hidden = !open;
+  burger.setAttribute("aria-expanded", open);
+}
+burger.addEventListener("click", e => { e.stopPropagation(); setDrop(drop.hidden); });
+document.addEventListener("click", e => { if (!drop.hidden && (!drop.contains(e.target) || e.target.closest("a"))) setDrop(false); });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !drop.hidden) { setDrop(false); burger.focus(); } });
+matchMedia("(max-width: 760px)").addEventListener("change", e => { if (!e.matches) setDrop(false); });
+
+if (matchMedia("(max-width: 760px)").matches) document.getElementById("catalog").open = false;
+render();
+</script>
