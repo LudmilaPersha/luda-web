@@ -162,6 +162,13 @@
   .dlg .pr { background: var(--paper-2); border-left: 3px solid var(--red); padding: 10px 14px; border-radius: 0 6px 6px 0; margin: 0 0 14px; font-variant-numeric: tabular-nums; }
   .dlg .pr p, .dlg .pr ul { margin: 0; }
   .dlg .todo { color: var(--muted); font-style: italic; }
+  /* Фото на весь екран: натиснути на фото у вікні програми; закрити — будь-де або Esc */
+  .dlg img.hero { cursor: zoom-in; }
+  dialog.zoom { width: 100%; max-width: 100%; height: 100%; max-height: 100%; background: transparent; box-shadow: none; border-radius: 0; cursor: zoom-out; }
+  dialog.zoom::backdrop { background: rgb(20 12 6 / .9); }
+  dialog.zoom[open] { display: grid; place-items: center; }
+  dialog.zoom img { max-width: calc(100vw - 24px); max-height: calc(100vh - 24px); object-fit: contain; border-radius: 6px; display: block; }
+  dialog.zoom .close { position: fixed; }
   .close { position: absolute; top: 14px; right: 14px; width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--line); background: var(--paper-2); font-size: 22px; line-height: 1; cursor: pointer; color: var(--ink); }
   .dlg .ask { display: inline-block; margin-top: 8px; background: var(--red); color: #fff; text-decoration: none; padding: 10px 20px; border-radius: 6px; font-weight: 700; }
 
@@ -332,6 +339,7 @@
 </footer>
 
 <dialog id="dlg"><button class="close" id="dlg-close" aria-label="Закрити">×</button><div class="dlg" id="dlg-body"></div></dialog>
+<dialog class="zoom" id="zoom" aria-label="Фото"><button class="close" aria-label="Закрити">×</button><img id="zoom-img" alt=""></dialog>
 
 <script>
 /* КАТАЛОГ. Рубрика → підрубрики → програми. Додати рубрику/підрубрику/програму = додати ще один блок.
@@ -1471,7 +1479,12 @@ function openItem(it) {
   if (!dlg.open) dlg.showModal(); dlg.scrollTop = 0;
 }
 document.getElementById("dlg-close").onclick = () => dlg.close();
-dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
+dlg.addEventListener("click", e => {
+  if (e.target === dlg) dlg.close();
+  if (e.target.matches("img.hero")) { document.getElementById("zoom-img").src = e.target.src; zoom.showModal(); } /* фото на весь екран */
+});
+const zoom = document.getElementById("zoom");
+zoom.addEventListener("click", () => zoom.close());
 
 /* Контури Праги (зліва направо): Петршин, Град із собором св. Віта, Мала Страна зі св. Миколаєм,
    Карлів міст із вежами, Старе Місто з ратушею і Тинським храмом, Вишеград. Земля — y=150. */
