@@ -1,6 +1,7 @@
 """Збірка пілота 2 з текстів у папці content/.
 
-content/  →  _src/pilot2.html (шаблон)  →  pilot2/index.html + pilot2/footer/index.html
+content/  →  _src/pilot2.html (шаблон)  →  index.html (головна адреса сайту; фото — з pilot2/images/)
+Старі адреси pilot2/ і pilot2/footer/ — сторінки-переадресації на головну.
 Після збірки сторінку відкриває Chrome без вікна і зберігає готовий HTML з текстами
 («попередній рендер»): текст видно одразу, навіть без JavaScript.
 
@@ -182,16 +183,37 @@ def prerender(path):
     return dom if dom.lstrip().lower().startswith("<!doctype") else "<!doctype html>\n" + dom
 
 
+REDIRECT = """<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<!-- Стара адреса пілота 2: сайт тепер на головній адресі -->
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://segolo.github.io/luda-web/">
+<meta http-equiv="refresh" content="0; url=/luda-web/">
+<title>Перший магазин вражень</title>
+</head>
+<body>
+<a href="/luda-web/">Перший магазин вражень</a>
+<script>location.replace("/luda-web/" + location.hash);</script>
+</body>
+</html>
+"""
+
+
 def main():
     raw = assemble()
-    index = OUT / "index.html"
-    index.write_text(raw, encoding="utf-8", newline="\n")
-    if "--no-prerender" not in sys.argv:
-        index.write_text(prerender(index), encoding="utf-8", newline="\n")
-    full = index.read_text(encoding="utf-8")
-    # у підпапці footer/ картинки лежать на рівень вище
-    (OUT / "footer" / "index.html").write_text(full.replace("images/", "../images/"), encoding="utf-8", newline="\n")
-    print("OK: pilot2/index.html, pilot2/footer/index.html")
+    # рендеримо тимчасову копію поруч із фото (pilot2/), потім кладемо на головну з шляхом pilot2/images/
+    tmp = OUT / "_prerender.html"
+    tmp.write_text(raw, encoding="utf-8", newline="\n")
+    try:
+        full = raw if "--no-prerender" in sys.argv else prerender(tmp)
+    finally:
+        tmp.unlink()
+    (ROOT / "index.html").write_text(full.replace("images/", "pilot2/images/"), encoding="utf-8", newline="\n")
+    for old in (OUT / "index.html", OUT / "footer" / "index.html"):
+        old.write_text(REDIRECT, encoding="utf-8", newline="\n")
+    print("OK: index.html (+ redirects pilot2/, pilot2/footer/)")
 
 
 if __name__ == "__main__":

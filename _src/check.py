@@ -22,7 +22,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 from build import ROOT, OUT, chrome, load_catalog  # noqa: E402
 
 CHK = ROOT / "_check"
-PAGE = OUT / "index.html"
+PAGE = ROOT / "index.html"
 fail = False
 
 
@@ -70,10 +70,10 @@ ok(f"saved {CHK}\\shot-*.png") if len(shots) == 2 else bad("screenshots missing"
 print("3. Local files")
 code = re.sub(r"<!--.*?-->", "", html, flags=re.S)
 code = re.sub(r"/\*.*?\*/", "", code, flags=re.S)
-refs = set(re.findall(r'(?:src|href)="([^"#:$]+)"', code)) | set(re.findall(r'"(images/[^"]+)"', code))
+refs = set(re.findall(r'(?:src|href)="([^"#:$]+)"', code)) | set(re.findall(r'"(pilot2/images/[^"]+)"', code))
 missing = []
 for f in sorted(refs):
-    p = ROOT / f[len("/luda-web/"):] if f.startswith("/luda-web/") else OUT / f
+    p = ROOT / f[len("/luda-web/"):] if f.startswith("/luda-web/") else ROOT / f
     if not p.is_file():
         missing.append(f)
 ok(f"all {len(refs)} local files exist") if not missing else bad("missing: " + ", ".join(missing))
