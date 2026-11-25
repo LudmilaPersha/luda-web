@@ -143,7 +143,7 @@
   .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
   .card { appearance: none; border: 0; font: inherit; text-align: left; cursor: pointer; background: var(--brown); color: var(--cream); border-radius: 10px; padding: 14px 14px 16px; display: grid; grid-template-rows: auto 1fr auto; gap: 8px; box-shadow: 0 6px 16px rgb(59 43 29 / .25); transition: background .2s, transform .2s; }
   .card:hover { background: var(--brown-2); transform: translateY(-2px); }
-  .card h4 { margin: 0; font-family: var(--head); font-weight: 400; font-size: 19px; line-height: 1.25; text-wrap: balance; }
+  .card .t { display: block; margin: 0; font-family: var(--head); font-weight: 400; font-size: 19px; line-height: 1.25; text-wrap: balance; }
   .card .price { font-size: 14px; opacity: .85; align-self: end; }
   .card .pic { aspect-ratio: 4 / 3; border-radius: 6px; overflow: hidden; background: var(--paper-2); display: grid; place-items: center; }
   .card .pic img { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -280,31 +280,31 @@
     </details>
   </aside>
   <section class="content" id="content" aria-live="polite"><h2>Популярні пропозиції</h2><div class="sub"><div class="cards"><button type="button" class="card" data-feat="0,0,0">
-        <h4>Все найцікавіше в Празі</h4>
+        <span class="t">Все найцікавіше в Празі</span>
         <span class="price">Ціна - 150 євро/за групу/2 години</span>
         <span class="pic"><img src="images/pristaviste.jpg" alt=""></span></button><button type="button" class="card" data-feat="0,0,3">
-        <h4>Легенди і Містика Праги</h4>
+        <span class="t">Легенди і Містика Праги</span>
         <span class="price">Ціна - 150 євро/за групу/2 години</span>
         <span class="pic"><img src="images/praha-misticka.jpg" alt=""></span></button><button type="button" class="card" data-feat="0,0,10">
-        <h4>Слідами героїв Дена Брауна в Празі: Таємниця Таємниць</h4>
+        <span class="t">Слідами героїв Дена Брауна в Празі: Таємниця Таємниць</span>
         <span class="price">150 євро / за групу / 2 год.</span>
         <span class="pic"><img src="images/den-braun.jpg" alt=""></span></button><button type="button" class="card" data-feat="2,2,0">
-        <h4>Тандем-стрибки з парашутом</h4>
+        <span class="t">Тандем-стрибки з парашутом</span>
         <span class="price">Ціна: 5 000 крон / особа</span>
         <span class="pic"><img src="images/tandem.jpg" alt=""></span></button><button type="button" class="card" data-feat="2,0,4">
-        <h4>Пивні та винні ванни</h4>
+        <span class="t">Пивні та винні ванни</span>
         <span class="price">3290 крон/137 євро</span>
         <span class="pic"><img src="images/pivni-lazne.jpg" alt=""></span></button><button type="button" class="card" data-feat="1,0,0">
-        <h4>Чеський Крумлов і замок Глубока</h4>
+        <span class="t">Чеський Крумлов і замок Глубока</span>
         <span class="price">Ціна збірної групової - 60 євро/особа</span>
         <span class="pic"><img src="images/krumlov.jpg" alt=""></span></button><button type="button" class="card" data-feat="1,0,1">
-        <h4>Карлові Вари, завод «Мозер», термальні лазні, замок Локет*</h4>
+        <span class="t">Карлові Вари, завод «Мозер», термальні лазні, замок Локет*</span>
         <span class="price">Ціна збірної групової - 55 євро/особа</span>
         <span class="pic"><img src="images/karlovy-vary.jpg" alt=""></span></button><button type="button" class="card" data-feat="1,0,14">
-        <h4>З Праги до Дрездена та національного парку Саксонська Швейцарія</h4>
+        <span class="t">З Праги до Дрездена та національного парку Саксонська Швейцарія</span>
         <span class="price">Ціна збірної групової в Дрезден - 55 євро/особа</span>
         <span class="pic"><img src="images/drazdany.jpg" alt=""></span></button><button type="button" class="card" data-feat="1,0,4">
-        <h4>Замок Конопіште. Замок Орлик. Броварня Velkopopovický Kozel</h4>
+        <span class="t">Замок Конопіште. Замок Орлик. Броварня Velkopopovický Kozel</span>
         <span class="price">Ціна під запит</span>
         <span class="pic"><img src="images/konopiste.jpg" alt=""></span></button></div></div></section>
 </div>
@@ -365,7 +365,7 @@
 </footer>
 
 <dialog id="dlg"><button class="close" id="dlg-close" aria-label="Закрити">×</button><div class="dlg" id="dlg-body"></div></dialog>
-<dialog class="zoom" id="zoom" aria-label="Фото"><button class="close" aria-label="Закрити">×</button><img id="zoom-img" alt=""></dialog>
+<dialog class="zoom" id="zoom" aria-label="Фото"><button class="close" aria-label="Закрити">×</button><img id="zoom-img" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt=""></dialog><!-- порожня картинка-заглушка: справжнє фото підставляє скрипт -->
 
 <script>
 /* КАТАЛОГ — збирається з папки content/catalog/ (тексти Людмили, дослівно). Тут не міняти:
@@ -870,7 +870,7 @@ function renderCat() {
 }
 function cardHtml(it, attrs) {
   return `<button type="button" class="card" ${attrs}>
-        <h4>${esc(it.title)}</h4>
+        <span class="t">${esc(it.title)}</span>
         <span class="price">${it.price ? esc(it.price) : (it.body ? "" : "текст готується")}</span>
         <span class="pic${it.photo ? "" : " empty"}"><img src="${it.photo || LION}" alt=""></span></button>`;
 }
