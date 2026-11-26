@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <!-- Стара адреса пілота 2: сайт тепер на головній адресі -->
 <meta name="robots" content="noindex">
-<link rel="canonical" href="https://segolo.github.io/luda-web/">
-<meta http-equiv="refresh" content="0; url=/luda-web/">
+<link rel="canonical" href="{site}">
+<meta http-equiv="refresh" content="0; url={up}">
 <title>Перший магазин вражень</title>
 </head>
 <body>
-<a href="/luda-web/">Перший магазин вражень</a>
-<script>location.replace("/luda-web/" + location.hash);</script>
+<a href="{up}">Перший магазин вражень</a>
+<script>location.replace(new URL("{up}", location.href) + location.hash);</script>
 </body>
 </html>

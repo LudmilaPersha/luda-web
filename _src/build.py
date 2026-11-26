@@ -21,6 +21,8 @@ ROOT = Path(__file__).resolve().parent.parent
 CONTENT = ROOT / "content"
 SRC = ROOT / "_src"
 OUT = ROOT / "pilot2"
+# адреса сайту (для Google і прев'ю посилань)
+SITE = "https://segolo.github.io/luda-web/"
 
 
 # ── Файли з текстами: «шапка» між рядками --- (поле: "значення") + текст ──
@@ -159,7 +161,7 @@ def assemble():
     left = re.findall(r"\{\{\w+\}\}", html)
     if left:
         raise SystemExit(f"не заповнено: {left}")
-    return (SRC / "head.html").read_text(encoding="utf-8") + html
+    return (SRC / "head.html").read_text(encoding="utf-8").replace("{{site}}", SITE) + html
 
 
 def chrome():
@@ -189,13 +191,13 @@ REDIRECT = """<!doctype html>
 <meta charset="utf-8">
 <!-- Стара адреса пілота 2: сайт тепер на головній адресі -->
 <meta name="robots" content="noindex">
-<link rel="canonical" href="https://segolo.github.io/luda-web/">
-<meta http-equiv="refresh" content="0; url=/luda-web/">
+<link rel="canonical" href="{site}">
+<meta http-equiv="refresh" content="0; url={up}">
 <title>Перший магазин вражень</title>
 </head>
 <body>
-<a href="/luda-web/">Перший магазин вражень</a>
-<script>location.replace("/luda-web/" + location.hash);</script>
+<a href="{up}">Перший магазин вражень</a>
+<script>location.replace(new URL("{up}", location.href) + location.hash);</script>
 </body>
 </html>
 """
