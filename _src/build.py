@@ -22,7 +22,7 @@ CONTENT = ROOT / "content"
 SRC = ROOT / "_src"
 OUT = ROOT / "pilot2"
 # адреса сайту (для Google і прев'ю посилань)
-SITE = "https://luda-web.pages.dev/"
+SITE = "https://praguetour.pages.dev/"
 DIST = ROOT / "dist"
 
 
