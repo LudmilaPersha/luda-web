@@ -1,5 +1,5 @@
 # Після зміни текстів (content/) або шаблону (_src/) GitHub сам збирає головну сторінку (index.html),
-# зберігає результат і викладає сайт на Cloudflare Pages
+# зберігає результат і викладає сайт на Cloudflare Pages (секрети CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID)
 name: Build site from texts
 on:
   push:
