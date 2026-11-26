@@ -200,6 +200,11 @@ def main():
         shutil.rmtree(DIST)
     shutil.copytree(OUT, DIST / "pilot2")
     (DIST / "index.html").write_text(full.replace("images/", "pilot2/images/"), encoding="utf-8", newline="\n")
+    # для Google: дозвіл індексувати + карта сайту
+    (DIST / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {SITE}sitemap.xml\n", encoding="utf-8", newline="\n")
+    (DIST / "sitemap.xml").write_text(
+        '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+        f"  <url><loc>{SITE}</loc></url>\n</urlset>\n", encoding="utf-8", newline="\n")
     print("OK: dist/")
 
 
