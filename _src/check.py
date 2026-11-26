@@ -1,4 +1,4 @@
-"""Перевірка зібраного пілота 2 (після _src/build.py, перед комітом).
+"""Перевірка зібраного сайту dist/ (після _src/build.py, перед комітом).
 
   1. JavaScript без помилок; усі блоки, які заповнює скрипт, заповнені; текст є в HTML і без скрипта
   2. знімки екрана: телефон 390px і комп'ютер 1366px → _check/shot-*.png (подивитися!)
@@ -19,10 +19,10 @@ from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
 sys.path.insert(0, str(Path(__file__).parent))
-from build import ROOT, OUT, chrome, load_catalog  # noqa: E402
+from build import ROOT, DIST, chrome, load_catalog  # noqa: E402
 
 CHK = ROOT / "_check"
-PAGE = ROOT / "index.html"
+PAGE = DIST / "index.html"
 fail = False
 
 
@@ -73,7 +73,7 @@ code = re.sub(r"/\*.*?\*/", "", code, flags=re.S)
 refs = set(re.findall(r'(?:src|href)="([^"#:$]+)"', code)) | set(re.findall(r'"(pilot2/images/[^"]+)"', code))
 missing = []
 for f in sorted(refs):
-    p = ROOT / f[len("/luda-web/"):] if f.startswith("/luda-web/") else ROOT / f
+    p = DIST / f
     if not p.is_file():
         missing.append(f)
 ok(f"all {len(refs)} local files exist") if not missing else bad("missing: " + ", ".join(missing))

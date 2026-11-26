@@ -1,7 +1,7 @@
 """Збірка пілота 2 з текстів у папці content/.
 
-content/  →  _src/pilot2.html (шаблон)  →  index.html (головна адреса сайту; фото — з pilot2/images/)
-Старі адреси pilot2/ і pilot2/footer/ — сторінки-переадресації на головну.
+content/  →  _src/pilot2.html (шаблон)  →  dist/ (готовий сайт для Cloudflare Pages; у Git не зберігається)
+dist/index.html — головна сторінка; dist/pilot2/ — фото, іконки і старі адреси-переадресації.
 Після збірки сторінку відкриває Chrome без вікна і зберігає готовий HTML з текстами
 («попередній рендер»): текст видно одразу, навіть без JavaScript.
 
@@ -22,7 +22,8 @@ CONTENT = ROOT / "content"
 SRC = ROOT / "_src"
 OUT = ROOT / "pilot2"
 # адреса сайту (для Google і прев'ю посилань)
-SITE = "https://segolo.github.io/luda-web/"
+SITE = "https://luda-web.pages.dev/"
+DIST = ROOT / "dist"
 
 
 # ── Файли з текстами: «шапка» між рядками --- (поле: "значення") + текст ──
@@ -185,24 +186,6 @@ def prerender(path):
     return dom if dom.lstrip().lower().startswith("<!doctype") else "<!doctype html>\n" + dom
 
 
-REDIRECT = """<!doctype html>
-<html lang="uk">
-<head>
-<meta charset="utf-8">
-<!-- Стара адреса пілота 2: сайт тепер на головній адресі -->
-<meta name="robots" content="noindex">
-<link rel="canonical" href="{site}">
-<meta http-equiv="refresh" content="0; url={up}">
-<title>Перший магазин вражень</title>
-</head>
-<body>
-<a href="{up}">Перший магазин вражень</a>
-<script>location.replace(new URL("{up}", location.href) + location.hash);</script>
-</body>
-</html>
-"""
-
-
 def main():
     raw = assemble()
     # рендеримо тимчасову копію поруч із фото (pilot2/), потім кладемо на головну з шляхом pilot2/images/
@@ -212,10 +195,11 @@ def main():
         full = raw if "--no-prerender" in sys.argv else prerender(tmp)
     finally:
         tmp.unlink()
-    (ROOT / "index.html").write_text(full.replace("images/", "pilot2/images/"), encoding="utf-8", newline="\n")
-    for old in (OUT / "index.html", OUT / "footer" / "index.html"):
-        old.write_text(REDIRECT, encoding="utf-8", newline="\n")
-    print("OK: index.html (+ redirects pilot2/, pilot2/footer/)")
+    if DIST.exists():
+        shutil.rmtree(DIST)
+    shutil.copytree(OUT, DIST / "pilot2")
+    (DIST / "index.html").write_text(full.replace("images/", "pilot2/images/"), encoding="utf-8", newline="\n")
+    print("OK: dist/")
 
 
 if __name__ == "__main__":
