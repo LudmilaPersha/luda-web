@@ -1,6 +1,6 @@
 ---
 title: "Прага за 2 дні"
-photo: "images/praha-mala-strana.jpg"
+photo: "images/praha-linhartova.jpg"
 price: "Ціна - 365 євро/за групу/2 дні"
 ---
 > Ціна - 365 євро/за групу/2 дні
