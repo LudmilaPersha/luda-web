@@ -119,6 +119,7 @@ def load_catalog():
                     continue
                 m, body = read_md(f)
                 it = {k: m[k] for k in ("title", "photo", "price") if k in m}
+                it["id"] = re.sub(r"^\d+-", "", f.stem)  # посилання на програму: сайт/#praha-za-2-dni
                 if body.strip():
                     it["body"] = md_to_html(body)
                 items.append(it)

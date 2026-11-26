@@ -126,6 +126,7 @@
   dialog.zoom .close { position: fixed; }
   .close { position: absolute; top: 14px; right: 14px; width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--line); background: var(--paper-2); font-size: 22px; line-height: 1; cursor: pointer; color: var(--ink); }
   .dlg .ask { display: inline-block; margin-top: 8px; background: var(--red); color: #fff; text-decoration: none; padding: 10px 20px; border-radius: 6px; font-weight: 700; }
+  .dlg .share { display: block; margin-top: 10px; background: none; border: 0; padding: 4px 0; color: var(--muted); font: inherit; font-size: 14px; text-decoration: underline; cursor: pointer; }
 
   /* ── ПРО НАС: фото зліва, текст Людмили справа ── */
   .about { display: grid; grid-template-columns: minmax(0, 520px) minmax(0, 1fr); gap: clamp(28px, 5vw, 60px); align-items: start; padding-block: 8px 64px; scroll-margin-top: 16px; }
@@ -366,10 +367,27 @@ function openItem(it) {
   document.getElementById("dlg-body").innerHTML = `<h2>${esc(it.title)}</h2>` +
     (it.photo ? `<img class="hero" src="${it.photo}" alt="">` : "") +
     (it.body || `<p class="todo">Текст готується.</p>`) +
-    `<a class="ask" href="tel:+420775423334">Замовити: +420 775 423 334</a>`;
+    `<a class="ask" href="tel:+420775423334">Замовити: +420 775 423 334</a>` +
+    `<button type="button" class="share" id="share">🔗 Скопіювати посилання</button>`;
+  history.replaceState(null, "", "#" + it.id); /* у адресі — посилання саме на цю програму */
   if (!dlg.open) dlg.showModal(); dlg.scrollTop = 0;
 }
 document.getElementById("dlg-close").onclick = () => dlg.close();
+dlg.addEventListener("close", () => history.replaceState(null, "", location.pathname + location.search));
+document.addEventListener("click", e => {
+  if (e.target.id !== "share") return;
+  const url = location.href, b = e.target;
+  (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject())
+    .then(() => { b.textContent = "Скопійовано ✓"; }, () => { prompt("Посилання:", url); });
+});
+/* відкрити програму з посилання (#praha-za-2-dni) */
+function openFromHash() {
+  const id = decodeURIComponent(location.hash.slice(1));
+  if (!id) return;
+  for (const [c, cat] of CATALOG.entries()) for (const sub of cat.subs) for (const it of sub.items)
+    if (it.id === id) { current = c; render(); openItem(it); return; }
+}
+window.addEventListener("hashchange", openFromHash);
 dlg.addEventListener("click", e => {
   if (e.target === dlg) dlg.close();
   if (e.target.matches("img.hero")) { document.getElementById("zoom-img").src = e.target.src; zoom.showModal(); } /* фото на весь екран */
@@ -436,4 +454,5 @@ matchMedia("(max-width: 760px)").addEventListener("change", e => { if (!e.matche
 
 if (matchMedia("(max-width: 760px)").matches) document.getElementById("catalog").open = false;
 render();
+openFromHash();
 </script>
